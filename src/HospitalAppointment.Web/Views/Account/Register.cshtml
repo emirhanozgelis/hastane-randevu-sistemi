@@ -47,7 +47,9 @@
                         </div>
                         <div class="col-md-6">
                             <label asp-for="DateOfBirth" class="form-label fw-semibold">Doğum Tarihi</label>
-                            <input asp-for="DateOfBirth" class="form-control" type="date" />
+                            <input asp-for="DateOfBirth" class="form-control" type="date"
+                                   min="1900-01-01"
+                                   max="@(DateTime.Today.ToString("yyyy-MM-dd"))" />
                             <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">

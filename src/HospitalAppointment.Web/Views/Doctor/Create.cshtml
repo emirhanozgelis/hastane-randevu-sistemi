@@ -36,7 +36,9 @@
                         </div>
                         <div class="col-md-4">
                             <label asp-for="DateOfBirth" class="form-label fw-semibold">Doğum Tarihi</label>
-                            <input asp-for="DateOfBirth" class="form-control" type="date" />
+                            <input asp-for="DateOfBirth" class="form-control" type="date"
+                                   min="1900-01-01"
+                                   max="@(DateTime.Today.AddYears(-18).ToString("yyyy-MM-dd"))" />
                             <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
                         </div>
                         <div class="col-md-4">
@@ -49,7 +51,9 @@
                         </div>
                         <div class="col-md-4">
                             <label asp-for="HireDate" class="form-label fw-semibold">İşe Giriş Tarihi</label>
-                            <input asp-for="HireDate" class="form-control" type="date" />
+                            <input asp-for="HireDate" class="form-control" type="date"
+                                   min="1950-01-01"
+                                   max="@(DateTime.Today.ToString("yyyy-MM-dd"))" />
                             <span asp-validation-for="HireDate" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">

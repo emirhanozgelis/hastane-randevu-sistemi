@@ -40,6 +40,7 @@ public abstract class Person : BaseEntity
         ValidateName(lastName, nameof(lastName));
         ValidateEmail(email);
         ValidatePhone(phoneNumber);
+        ValidateDateOfBirth(dateOfBirth);
 
         FirstName = firstName.Trim();
         LastName = lastName.Trim();
@@ -73,6 +74,15 @@ public abstract class Person : BaseEntity
         var age = today.Year - DateOfBirth.Year;
         if (DateOfBirth > today.AddYears(-age)) age--;
         return age;
+    }
+
+    // Backend'de de doğum tarihi koruması — 0001-01-01 ve 1900 öncesi kabul edilmez
+    private static void ValidateDateOfBirth(DateOnly date)
+    {
+        if (date == DateOnly.MinValue || date.Year < 1900)
+            throw new ArgumentException("Doğum tarihi 1900 yılından önce olamaz.", nameof(date));
+        if (date > DateOnly.FromDateTime(DateTime.Today))
+            throw new ArgumentException("Doğum tarihi bugünden ileri bir tarih olamaz.", nameof(date));
     }
 
     private static void ValidateName(string name, string paramName)

@@ -44,6 +44,7 @@ public class RegisterViewModel
     public string PhoneNumber { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Doğum tarihi zorunludur.")]
+    [ValidBirthDate(MinAge = 0, MaxAge = 120, MinYear = 1900)]
     [Display(Name = "Doğum Tarihi")]
     [DataType(DataType.Date)]
     public DateOnly DateOfBirth { get; set; }

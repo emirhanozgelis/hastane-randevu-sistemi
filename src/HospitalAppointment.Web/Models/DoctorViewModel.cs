@@ -32,6 +32,8 @@ public class CreateDoctorViewModel
     public string PhoneNumber { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Doğum tarihi zorunludur.")]
+    [ValidBirthDate(MinAge = 18, MaxAge = 80, MinYear = 1900,
+        ErrorMessage = "Doğum tarihi geçersiz. Doktor en az 18 yaşında olmalıdır.")]
     [Display(Name = "Doğum Tarihi")]
     [DataType(DataType.Date)]
     public DateOnly DateOfBirth { get; set; } = DateOnly.FromDateTime(DateTime.Today.AddYears(-30));
@@ -46,6 +48,8 @@ public class CreateDoctorViewModel
     public string EmployeeNumber { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "İşe giriş tarihi zorunludur.")]
+    [ValidHireDate(MinYear = 1950,
+        ErrorMessage = "İşe giriş tarihi geçersiz (1950 öncesi veya gelecek tarih olamaz).")]
     [Display(Name = "İşe Giriş Tarihi")]
     [DataType(DataType.Date)]
     public DateOnly HireDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
