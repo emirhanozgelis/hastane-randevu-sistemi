@@ -5,6 +5,7 @@ using HospitalAppointment.Infrastructure.Identity;
 using HospitalAppointment.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +20,8 @@ public static class InfrastructureServiceExtensions
     {
         // PostgreSQL veritabanı bağlantısı — Npgsql sağlayıcısı
         services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"))
+                   .ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning)));
 
         // ASP.NET Core Identity yapılandırması
         services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -46,6 +48,7 @@ public static class InfrastructureServiceExtensions
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IHealthcareServiceRepository, HealthcareServiceRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<ICityRepository, CityRepository>();
 
         // Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();

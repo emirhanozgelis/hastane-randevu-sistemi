@@ -12,15 +12,18 @@ public class BranchController : Controller
 {
     private readonly IBranchService _branchService;
     private readonly IHospitalService _hospitalService;
+    private readonly ILocationService _locationService;
     private readonly ILogger<BranchController> _logger;
 
     public BranchController(
         IBranchService branchService,
         IHospitalService hospitalService,
+        ILocationService locationService,
         ILogger<BranchController> logger)
     {
         _branchService = branchService;
         _hospitalService = hospitalService;
+        _locationService = locationService;
         _logger = logger;
     }
 
@@ -139,5 +142,22 @@ public class BranchController : Controller
     {
         var hospitals = await _hospitalService.GetAllHospitalsAsync(cancellationToken);
         ViewBag.Hospitals = new SelectList(hospitals, "Id", "Name", selectedId);
+    }
+
+    // İlleri döndürür — JSON (şube formu için)
+    [HttpGet]
+    public async Task<IActionResult> GetCities(CancellationToken cancellationToken)
+    {
+        var cities = await _locationService.GetCitiesAsync(cancellationToken);
+        return Json(cities.Select(c => new { value = c.Id, text = $"{c.PlateCode} — {c.Name}" }));
+    }
+
+    // İlçeleri döndürür — JSON
+    [HttpGet]
+    public async Task<IActionResult> GetDistricts(Guid cityId, CancellationToken cancellationToken)
+    {
+        if (cityId == Guid.Empty) return Json(Array.Empty<object>());
+        var districts = await _locationService.GetDistrictsByCityAsync(cityId, cancellationToken);
+        return Json(districts.Select(d => new { value = d.Name, text = d.Name }));
     }
 }

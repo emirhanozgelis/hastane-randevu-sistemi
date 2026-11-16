@@ -195,6 +195,36 @@ namespace HospitalAppointment.Infrastructure.Data.Migrations
                     b.ToTable("Branches", (string)null);
                 });
 
+            modelBuilder.Entity("HospitalAppointment.Domain.Entities.City", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("PlateCode")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("PlateCode")
+                        .IsUnique();
+
+                    b.ToTable("Cities", (string)null);
+                });
+
             modelBuilder.Entity("HospitalAppointment.Domain.Entities.Department", b =>
                 {
                     b.Property<Guid>("Id")
@@ -227,6 +257,33 @@ namespace HospitalAppointment.Infrastructure.Data.Migrations
                     b.HasIndex("BranchId");
 
                     b.ToTable("Departments", (string)null);
+                });
+
+            modelBuilder.Entity("HospitalAppointment.Domain.Entities.District", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityId", "Name");
+
+                    b.ToTable("Districts", (string)null);
                 });
 
             modelBuilder.Entity("HospitalAppointment.Domain.Entities.Doctor", b =>
@@ -1033,6 +1090,17 @@ namespace HospitalAppointment.Infrastructure.Data.Migrations
                     b.Navigation("Branch");
                 });
 
+            modelBuilder.Entity("HospitalAppointment.Domain.Entities.District", b =>
+                {
+                    b.HasOne("HospitalAppointment.Domain.Entities.City", "City")
+                        .WithMany("Districts")
+                        .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("City");
+                });
+
             modelBuilder.Entity("HospitalAppointment.Domain.Entities.Doctor", b =>
                 {
                     b.HasOne("HospitalAppointment.Domain.Entities.Branch", "Branch")
@@ -1371,6 +1439,11 @@ namespace HospitalAppointment.Infrastructure.Data.Migrations
                     b.Navigation("Departments");
 
                     b.Navigation("WorkingHours");
+                });
+
+            modelBuilder.Entity("HospitalAppointment.Domain.Entities.City", b =>
+                {
+                    b.Navigation("Districts");
                 });
 
             modelBuilder.Entity("HospitalAppointment.Domain.Entities.Department", b =>

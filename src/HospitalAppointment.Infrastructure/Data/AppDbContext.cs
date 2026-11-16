@@ -32,6 +32,10 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<WorkingHours> WorkingHours => Set<WorkingHours>();
     public DbSet<Notification> Notifications => Set<Notification>();
 
+    // Coğrafi veriler — Türkiye il ve ilçeleri
+    public DbSet<City> Cities => Set<City>();
+    public DbSet<District> Districts => Set<District>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         // Önce Identity yapılandırması çalıştırılır

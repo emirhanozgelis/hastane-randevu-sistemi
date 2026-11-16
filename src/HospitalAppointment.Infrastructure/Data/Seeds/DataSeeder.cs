@@ -25,6 +25,7 @@ public static class DataSeeder
             // Bekleyen migration varsa uygula
             await context.Database.MigrateAsync();
 
+            await CityDistrictSeeder.SeedAsync(context, logger);
             await SeedRolesAsync(roleManager, logger);
             await SeedHospitalHierarchyAsync(context, logger);
             await SeedUsersAndStaffAsync(context, userManager, logger);
