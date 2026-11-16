@@ -1,58 +1,230 @@
-/* Hastane Randevu Sistemi — Ana CSS */
+/* ═══════════════════════════════════════════════════════
+   MediRandevu — Sağlık Randevu Portalı CSS
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+    --primary:    #1565C0;
+    --primary-dk: #0D47A1;
+    --primary-lt: #E3F2FD;
+    --accent:     #00897B;
+    --accent-lt:  #E0F2F1;
+    --danger:     #C62828;
+    --text:       #263238;
+    --text-muted: #607D8B;
+    --bg:         #F5F7FA;
+    --white:      #FFFFFF;
+    --border:     #ECEFF1;
+    --radius:     12px;
+    --shadow-sm:  0 2px 8px rgba(0,0,0,.07);
+    --shadow-md:  0 4px 20px rgba(0,0,0,.10);
+}
+
+/* Temel */
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #f8f9fa;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
-main {
-    flex: 1;
+main { flex: 1; }
+
+/* ─── Navbar ─────────────────────────────────────────── */
+.navbar {
+    background: linear-gradient(135deg, var(--primary-dk) 0%, var(--primary) 100%) !important;
+    box-shadow: 0 2px 12px rgba(13,71,161,.3);
+    padding: .75rem 0;
 }
 
-/* Navbar özelleştirme */
 .navbar-brand {
-    font-size: 1.3rem;
-    letter-spacing: 0.5px;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -.3px;
+    color: #fff !important;
 }
 
-/* Kart hover efekti */
+.navbar-brand .brand-icon {
+    width: 34px; height: 34px;
+    background: rgba(255,255,255,.2);
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: .5rem;
+    font-size: 1rem;
+}
+
+.navbar .nav-link {
+    color: rgba(255,255,255,.85) !important;
+    font-weight: 500;
+    padding: .4rem .8rem;
+    border-radius: 6px;
+    transition: all .2s;
+}
+.navbar .nav-link:hover, .navbar .nav-link.active {
+    color: #fff !important;
+    background: rgba(255,255,255,.15);
+}
+
+.navbar .dropdown-menu {
+    border: none;
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius);
+    padding: .4rem;
+}
+.navbar .dropdown-item {
+    border-radius: 8px;
+    padding: .5rem .9rem;
+    font-size: .9rem;
+    color: var(--text);
+    transition: background .15s;
+}
+.navbar .dropdown-item:hover { background: var(--primary-lt); color: var(--primary); }
+
+.navbar .btn-outline-light {
+    border-radius: 20px;
+    padding: .35rem 1.1rem;
+    font-weight: 600;
+    font-size: .88rem;
+}
+
+/* ─── Hero ───────────────────────────────────────────── */
+.hero {
+    background: linear-gradient(135deg, var(--primary-dk) 0%, #1976D2 60%, var(--accent) 100%);
+    color: #fff;
+    padding: 5rem 0 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.hero h1 { font-weight: 800; letter-spacing: -.5px; }
+.hero .lead { opacity: .9; font-size: 1.15rem; }
+
+/* ─── Kartlar ────────────────────────────────────────── */
 .card {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: var(--shadow-sm);
+    transition: transform .2s, box-shadow .2s;
 }
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.12) !important;
-}
-
-/* Durum rozeti renkleri */
-.badge.bg-pending { background-color: #ffc107; color: #000; }
-.badge.bg-confirmed { background-color: #198754; }
-.badge.bg-rejected { background-color: #dc3545; }
-.badge.bg-cancelled { background-color: #6c757d; }
-.badge.bg-completed { background-color: #0dcaf0; }
-.badge.bg-noshow { background-color: #212529; }
-
-/* Tablo özelleştirme */
-.table th {
-    white-space: nowrap;
+.card-header {
+    border-radius: var(--radius) var(--radius) 0 0 !important;
+    border-bottom: 1px solid rgba(0,0,0,.07);
     font-weight: 600;
 }
 
-/* Form özelleştirme */
-.form-label.fw-semibold {
-    color: #344050;
+/* Stat kartları */
+.stat-card { border-radius: var(--radius) !important; border: none !important; overflow: hidden; }
+.stat-card .icon-wrap {
+    width: 52px; height: 52px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; flex-shrink: 0;
 }
 
-/* Hero section */
-.rounded-3 {
-    border-radius: 0.75rem !important;
+/* ─── Tablolar ───────────────────────────────────────── */
+.table { --bs-table-bg: transparent; }
+.table thead th {
+    background: var(--primary-lt);
+    color: var(--primary-dk);
+    font-weight: 600;
+    font-size: .82rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border-bottom: 2px solid #BBDEFB;
+    padding: .9rem 1rem;
 }
+.table tbody tr { transition: background .15s; }
+.table tbody tr:hover { background: rgba(21,101,192,.04); }
+.table tbody td { vertical-align: middle; padding: .85rem 1rem; border-color: var(--border); }
 
-/* Footer */
+/* ─── Formlar ────────────────────────────────────────── */
+.form-control, .form-select {
+    border: 1.5px solid #CFD8DC;
+    border-radius: 8px;
+    padding: .55rem .85rem;
+    font-size: .93rem;
+    transition: border-color .2s, box-shadow .2s;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(21,101,192,.12);
+}
+.form-label.fw-semibold { font-size: .88rem; color: var(--text-muted); letter-spacing: .3px; }
+
+/* ─── Butonlar ───────────────────────────────────────── */
+.btn { border-radius: 8px; font-weight: 600; padding: .5rem 1.1rem; transition: all .2s; }
+.btn-primary { background: var(--primary); border-color: var(--primary); }
+.btn-primary:hover { background: var(--primary-dk); border-color: var(--primary-dk); box-shadow: 0 4px 12px rgba(21,101,192,.3); }
+.btn-success { background: var(--accent); border-color: var(--accent); }
+.btn-success:hover { background: #00796B; border-color: #00796B; }
+.btn-lg { padding: .65rem 1.5rem; font-size: 1rem; }
+
+/* Slot butonları */
+.slot-btn {
+    min-width: 90px;
+    font-size: .88rem;
+    padding: .45rem .8rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all .15s;
+}
+.slot-btn.btn-primary { animation: popIn .15s ease; }
+@keyframes popIn { from { transform: scale(.92); } to { transform: scale(1); } }
+
+/* ─── Badge'ler ──────────────────────────────────────── */
+.badge { font-weight: 600; padding: .35em .7em; border-radius: 6px; font-size: .78rem; }
+
+/* Durum badge'leri */
+.status-badge-pending  { background: #FFF3E0; color: #E65100; }
+.status-badge-confirmed{ background: #E8F5E9; color: #2E7D32; }
+.status-badge-rejected { background: #FFEBEE; color: #C62828; }
+.status-badge-cancelled{ background: #ECEFF1; color: #546E7A; }
+.status-badge-completed{ background: #E0F2F1; color: #00695C; }
+.status-badge-noshow   { background: #263238; color: #fff; }
+
+/* ─── Sayfa başlığı ──────────────────────────────────── */
+.page-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 0;
+    margin-bottom: 1.5rem;
+}
+.page-header h2 { font-weight: 700; font-size: 1.5rem; margin: 0; }
+
+/* ─── Boş durum ──────────────────────────────────────── */
+.empty-state { padding: 3rem; text-align: center; color: var(--text-muted); }
+.empty-state i { font-size: 3rem; opacity: .4; margin-bottom: 1rem; }
+
+/* ─── Footer ─────────────────────────────────────────── */
 footer {
-    font-size: 0.85rem;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    padding: 1rem 0;
+    font-size: .82rem;
+    color: var(--text-muted);
+}
+
+/* ─── Alert'ler ──────────────────────────────────────── */
+.alert { border: none; border-radius: var(--radius); font-size: .9rem; }
+.alert-success { background: #E8F5E9; color: #2E7D32; }
+.alert-danger  { background: #FFEBEE; color: #C62828; }
+.alert-info    { background: #E3F2FD; color: #1565C0; }
+.alert-warning { background: #FFF8E1; color: #F57F17; }
+
+/* ─── Responsive ─────────────────────────────────────── */
+@media (max-width: 768px) {
+    .hero { padding: 3rem 0 2.5rem; }
+    .hero h1 { font-size: 1.9rem; }
 }
