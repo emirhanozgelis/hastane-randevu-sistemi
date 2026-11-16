@@ -23,41 +23,72 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto ms-3 gap-1">
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Doctor" asp-action="Index">
-                        <i class="fas fa-user-md me-1"></i>Doktorlar
-                    </a>
-                </li>
-                @if (User.Identity?.IsAuthenticated == true)
+
+                @if (User.IsInRole("Admin") || User.IsInRole("HospitalManager"))
                 {
+                    @* Admin için tüm yönetim linkleri doğrudan görünür *@
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Admin" asp-action="Index">
+                            <i class="fas fa-tachometer-alt me-1"></i>Panel
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="fas fa-hospital me-1"></i>Hastane
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" asp-controller="Hospital" asp-action="Index">
+                                <i class="fas fa-hospital me-2 text-muted"></i>Hastaneler</a></li>
+                            <li><a class="dropdown-item" asp-controller="Branch" asp-action="Index">
+                                <i class="fas fa-code-branch me-2 text-muted"></i>Şubeler</a></li>
+                            <li><a class="dropdown-item" asp-controller="Department" asp-action="Index">
+                                <i class="fas fa-th-large me-2 text-muted"></i>Bölümler</a></li>
+                            <li><a class="dropdown-item" asp-controller="HealthcareService" asp-action="Index">
+                                <i class="fas fa-stethoscope me-2 text-muted"></i>Sağlık Hizmetleri</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Doctor" asp-action="Index">
+                            <i class="fas fa-user-md me-1"></i>Doktorlar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Appointment" asp-action="Index">
+                            <i class="fas fa-calendar-alt me-1"></i>Randevular
+                        </a>
+                    </li>
+                }
+                else if (User.IsInRole("Doctor"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Doctor" asp-action="Index">
+                            <i class="fas fa-user-md me-1"></i>Doktorlar
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Appointment" asp-action="Index">
                             <i class="fas fa-calendar-check me-1"></i>Randevularım
                         </a>
                     </li>
-                    @if (User.IsInRole("Admin") || User.IsInRole("HospitalManager"))
+                }
+                else
+                {
+                    @* Hasta veya anonim kullanıcı *@
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Doctor" asp-action="Index">
+                            <i class="fas fa-user-md me-1"></i>Doktorlar
+                        </a>
+                    </li>
+                    @if (User.Identity?.IsAuthenticated == true)
                     {
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="fas fa-cogs me-1"></i>Yönetim
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Appointment" asp-action="Index">
+                                <i class="fas fa-calendar-check me-1"></i>Randevularım
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">
-                                    <i class="fas fa-tachometer-alt me-2 text-primary"></i>Genel Bakış</a></li>
-                                <li><hr class="dropdown-divider my-1"></li>
-                                <li><a class="dropdown-item" asp-controller="Hospital" asp-action="Index">
-                                    <i class="fas fa-hospital me-2 text-muted"></i>Hastaneler</a></li>
-                                <li><a class="dropdown-item" asp-controller="Branch" asp-action="Index">
-                                    <i class="fas fa-code-branch me-2 text-muted"></i>Şubeler</a></li>
-                                <li><a class="dropdown-item" asp-controller="Doctor" asp-action="Index">
-                                    <i class="fas fa-user-md me-2 text-muted"></i>Doktorlar</a></li>
-                                <li><hr class="dropdown-divider my-1"></li>
-                                <li><a class="dropdown-item" asp-controller="Appointment" asp-action="Index">
-                                    <i class="fas fa-calendar-alt me-2 text-muted"></i>Tüm Randevular</a></li>
-                            </ul>
                         </li>
                     }
                 }
+
             </ul>
             <ul class="navbar-nav align-items-center gap-2">
                 @if (User.Identity?.IsAuthenticated == true)
