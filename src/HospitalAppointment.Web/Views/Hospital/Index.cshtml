@@ -1,0 +1,60 @@
+@model IReadOnlyList<HospitalAppointment.Application.DTOs.Hospital.HospitalDto>
+@{
+    ViewData["Title"] = "Hastane Yönetimi";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-hospital me-2 text-primary"></i>Hastaneler</h2>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Yeni Hastane
+    </a>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Hastane Adı</th>
+                        <th>Şehir</th>
+                        <th>İletişim</th>
+                        <th>Şube Sayısı</th>
+                        <th>Durum</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var h in Model)
+                    {
+                        <tr>
+                            <td class="fw-semibold">@h.Name</td>
+                            <td>@h.City</td>
+                            <td>@(h.ContactEmail ?? "—")</td>
+                            <td><span class="badge bg-primary">@h.BranchCount şube</span></td>
+                            <td>
+                                <span class="badge @(h.IsActive ? "bg-success" : "bg-danger")">
+                                    @(h.IsActive ? "Aktif" : "Pasif")
+                                </span>
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@h.Id" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                @if (h.IsActive)
+                                {
+                                    <form asp-action="Deactivate" asp-route-id="@h.Id" method="post" class="d-inline"
+                                          onsubmit="return confirm('Hastaneyi pasife almak istediğinizden emin misiniz?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-warning ms-1">
+                                            <i class="fas fa-power-off"></i>
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

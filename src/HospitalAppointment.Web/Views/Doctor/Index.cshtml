@@ -1,0 +1,58 @@
+@model IReadOnlyList<HospitalAppointment.Application.DTOs.Doctor.DoctorDto>
+@{
+    ViewData["Title"] = "Doktorlarımız";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-user-md me-2 text-primary"></i>Doktorlarımız</h2>
+    @if (User.IsInRole("Admin") || User.IsInRole("HospitalManager"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Yeni Doktor
+        </a>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Kayıtlı doktor bulunamadı.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var doctor in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 @(!doctor.IsActive ? "opacity-50" : "")">
+                    <div class="card-body text-center p-4">
+                        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width:70px;height:70px;font-size:1.8rem">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h5 class="card-title">@doctor.FullName</h5>
+                        <p class="text-muted mb-1"><i class="fas fa-stethoscope me-1"></i>@doctor.Specialization</p>
+                        <p class="text-muted small mb-1"><i class="fas fa-hospital me-1"></i>@doctor.BranchName</p>
+                        <p class="text-muted small"><i class="fas fa-th-large me-1"></i>@doctor.DepartmentName</p>
+                        @if (!doctor.IsActive)
+                        {
+                            <span class="badge bg-danger">Pasif</span>
+                        }
+                    </div>
+                    <div class="card-footer bg-transparent border-0 text-center pb-3">
+                        @if (User.IsInRole("Patient"))
+                        {
+                            <a asp-controller="Appointment" asp-action="Create"
+                               asp-route-doctorId="@doctor.Id" class="btn btn-sm btn-primary">
+                                <i class="fas fa-calendar-plus me-1"></i>Randevu Al
+                            </a>
+                        }
+                        <a asp-action="Availability" asp-route-id="@doctor.Id"
+                           class="btn btn-sm btn-outline-secondary ms-1">
+                            <i class="fas fa-clock me-1"></i>Takvim
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

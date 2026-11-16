@@ -1,0 +1,158 @@
+@model HospitalAppointment.Application.DTOs.Appointment.AppointmentDto
+@{
+    ViewData["Title"] = "Randevu Detayı";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Randevu Detayı</h5>
+                @{
+                    var badgeClass = Model.Status switch
+                    {
+                        HospitalAppointment.Domain.Enums.AppointmentStatus.Pending => "bg-warning text-dark",
+                        HospitalAppointment.Domain.Enums.AppointmentStatus.Confirmed => "bg-success",
+                        HospitalAppointment.Domain.Enums.AppointmentStatus.Rejected => "bg-danger",
+                        HospitalAppointment.Domain.Enums.AppointmentStatus.Cancelled => "bg-secondary",
+                        HospitalAppointment.Domain.Enums.AppointmentStatus.Completed => "bg-info",
+                        HospitalAppointment.Domain.Enums.AppointmentStatus.NoShow => "bg-dark",
+                        _ => "bg-secondary"
+                    };
+                }
+                <span class="badge @badgeClass fs-6">@Model.StatusDisplay</span>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-3">
+                    <!-- Hastane/Şube Bilgisi -->
+                    <div class="col-12">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="fas fa-hospital me-2"></i>Hastane Bilgileri
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Hastane:</strong> @Model.HospitalName</p>
+                                <p class="mb-1"><strong>Şube:</strong> @Model.BranchName</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Bölüm:</strong> @Model.DepartmentName</p>
+                                <p class="mb-1"><strong>Hizmet:</strong> @Model.ServiceName</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Doktor Bilgisi -->
+                    <div class="col-12">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="fas fa-user-md me-2"></i>Doktor Bilgileri
+                        </h6>
+                        <p class="mb-1"><strong>Doktor:</strong> @Model.DoctorName</p>
+                        <p class="mb-1"><strong>Uzmanlık:</strong> @Model.DoctorSpecialization</p>
+                    </div>
+
+                    <!-- Randevu Zamanı -->
+                    <div class="col-12">
+                        <h6 class="text-primary border-bottom pb-2">
+                            <i class="fas fa-clock me-2"></i>Randevu Zamanı
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p class="mb-1"><strong>Tarih:</strong> @Model.AppointmentDate.ToString("dd MMMM yyyy")</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-1"><strong>Başlangıç:</strong> @Model.StartTime.ToString("HH:mm")</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-1"><strong>Bitiş:</strong> @Model.EndTime.ToString("HH:mm")</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ücret -->
+                    <div class="col-12">
+                        <div class="alert alert-light border mb-0">
+                            <strong><i class="fas fa-lira-sign me-2"></i>Ücret:</strong>
+                            @Model.Price.ToString("N2") @Model.Currency
+                        </div>
+                    </div>
+
+                    <!-- Notlar -->
+                    @if (!string.IsNullOrEmpty(Model.PatientNotes) || !string.IsNullOrEmpty(Model.DoctorNotes) || !string.IsNullOrEmpty(Model.RejectionReason))
+                    {
+                        <div class="col-12">
+                            <h6 class="text-primary border-bottom pb-2"><i class="fas fa-sticky-note me-2"></i>Notlar</h6>
+                            @if (!string.IsNullOrEmpty(Model.PatientNotes))
+                            {
+                                <p class="mb-1"><strong>Hasta Notu:</strong> @Model.PatientNotes</p>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.DoctorNotes))
+                            {
+                                <p class="mb-1"><strong>Doktor Notu:</strong> @Model.DoctorNotes</p>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.RejectionReason))
+                            {
+                                <p class="mb-1 text-danger"><strong>Red Nedeni:</strong> @Model.RejectionReason</p>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- Aksiyon Butonları -->
+                <div class="d-flex gap-2 mt-4 flex-wrap">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Geri Dön
+                    </a>
+
+                    @if (Model.Status == HospitalAppointment.Domain.Enums.AppointmentStatus.Pending)
+                    {
+                        @if (User.IsInRole("Admin") || User.IsInRole("Doctor") || User.IsInRole("HospitalManager"))
+                        {
+                            <form asp-action="Confirm" asp-route-id="@Model.Id" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check me-2"></i>Onayla
+                                </button>
+                            </form>
+                            <form asp-action="Reject" asp-route-id="@Model.Id" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="reason" value="Doktor uygun değil." />
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-times me-2"></i>Reddet
+                                </button>
+                            </form>
+                        }
+                    }
+
+                    @if (Model.Status == HospitalAppointment.Domain.Enums.AppointmentStatus.Confirmed &&
+                         (User.IsInRole("Admin") || User.IsInRole("Doctor")))
+                    {
+                        <form asp-action="Complete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="notes" value="" />
+                            <button type="submit" class="btn btn-info text-white">
+                                <i class="fas fa-check-double me-2"></i>Tamamlandı
+                            </button>
+                        </form>
+                    }
+
+                    @if ((Model.Status == HospitalAppointment.Domain.Enums.AppointmentStatus.Pending ||
+                          Model.Status == HospitalAppointment.Domain.Enums.AppointmentStatus.Confirmed))
+                    {
+                        <form asp-action="Cancel" asp-route-id="@Model.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('Randevuyu iptal etmek istediğinizden emin misiniz?')">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="reason" value="" />
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fas fa-ban me-2"></i>İptal Et
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+            <div class="card-footer text-muted small">
+                <i class="fas fa-info-circle me-1"></i>
+                Oluşturulma: @Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+            </div>
+        </div>
+    </div>
+</div>

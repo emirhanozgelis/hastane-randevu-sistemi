@@ -1,0 +1,108 @@
+@model IReadOnlyList<HospitalAppointment.Application.DTOs.Appointment.AppointmentDto>
+@{
+    ViewData["Title"] = "Randevularım";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-calendar-alt me-2 text-primary"></i>@ViewData["Title"]</h2>
+    @if (User.IsInRole("Patient"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Yeni Randevu
+        </a>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>Henüz randevu bulunamadı.
+    </div>
+}
+else
+{
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Tarih / Saat</th>
+                            <th>Doktor</th>
+                            <th>Hizmet</th>
+                            <th>Şube</th>
+                            @if (User.IsInRole("Admin") || User.IsInRole("HospitalManager"))
+                            {
+                                <th>Hasta</th>
+                            }
+                            <th>Ücret</th>
+                            <th>Durum</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var apt in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">@apt.AppointmentDate.ToString("dd.MM.yyyy")</div>
+                                    <small class="text-muted">@apt.StartTime.ToString("HH:mm") – @apt.EndTime.ToString("HH:mm")</small>
+                                </td>
+                                <td>
+                                    <div>@apt.DoctorName</div>
+                                    <small class="text-muted">@apt.DoctorSpecialization</small>
+                                </td>
+                                <td>@apt.ServiceName</td>
+                                <td>@apt.BranchName</td>
+                                @if (User.IsInRole("Admin") || User.IsInRole("HospitalManager"))
+                                {
+                                    <td>@apt.PatientName</td>
+                                }
+                                <td>@apt.Price.ToString("N2") @apt.Currency</td>
+                                <td>
+                                    @{
+                                        var badgeClass = apt.Status switch
+                                        {
+                                            HospitalAppointment.Domain.Enums.AppointmentStatus.Pending => "bg-warning text-dark",
+                                            HospitalAppointment.Domain.Enums.AppointmentStatus.Confirmed => "bg-success",
+                                            HospitalAppointment.Domain.Enums.AppointmentStatus.Rejected => "bg-danger",
+                                            HospitalAppointment.Domain.Enums.AppointmentStatus.Cancelled => "bg-secondary",
+                                            HospitalAppointment.Domain.Enums.AppointmentStatus.Completed => "bg-info",
+                                            HospitalAppointment.Domain.Enums.AppointmentStatus.NoShow => "bg-dark",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass">@apt.StatusDisplay</span>
+                                </td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@apt.Id" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    @if (apt.Status == HospitalAppointment.Domain.Enums.AppointmentStatus.Pending ||
+                                         apt.Status == HospitalAppointment.Domain.Enums.AppointmentStatus.Confirmed)
+                                    {
+                                        <form asp-action="Cancel" asp-route-id="@apt.Id" method="post" class="d-inline"
+                                              onsubmit="return confirm('Randevuyu iptal etmek istediğinizden emin misiniz?')">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger ms-1">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    @if ((User.IsInRole("Doctor") || User.IsInRole("Admin")) &&
+                                         apt.Status == HospitalAppointment.Domain.Enums.AppointmentStatus.Pending)
+                                    {
+                                        <form asp-action="Confirm" asp-route-id="@apt.Id" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-success ms-1">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,89 @@
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<!-- Hero bölümü -->
+<div class="p-5 mb-4 bg-primary text-white rounded-3 shadow">
+    <div class="container-fluid py-3">
+        <h1 class="display-5 fw-bold"><i class="fas fa-hospital me-3"></i>Hastane Randevu Sistemi</h1>
+        <p class="col-md-8 fs-4">C# 14 / .NET 10 / Clean Architecture / OOP & SOLID — Akademik Proje</p>
+        @if (!User.Identity!.IsAuthenticated)
+        {
+            <a asp-controller="Account" asp-action="Register" class="btn btn-light btn-lg me-2">
+                <i class="fas fa-user-plus me-2"></i>Hemen Kayıt Ol
+            </a>
+            <a asp-controller="Doctor" asp-action="Index" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-user-md me-2"></i>Doktorları Gör
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Appointment" asp-action="Create" class="btn btn-light btn-lg">
+                <i class="fas fa-calendar-plus me-2"></i>Randevu Al
+            </a>
+        }
+    </div>
+</div>
+
+<!-- Özellik kartları -->
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body text-center p-4">
+                <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">Kolay Randevu</h5>
+                <p class="card-text text-muted">İstediğiniz doktoru seçip birkaç adımda online randevu alın.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body text-center p-4">
+                <i class="fas fa-user-md fa-3x text-success mb-3"></i>
+                <h5 class="card-title">Uzman Doktorlar</h5>
+                <p class="card-text text-muted">Kardiyoloji, Nöroloji, Ortopedi ve daha fazla uzmanlık dalında hizmet.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body text-center p-4">
+                <i class="fas fa-bell fa-3x text-warning mb-3"></i>
+                <h5 class="card-title">Anlık Bildirim</h5>
+                <p class="card-text text-muted">Randevu onay/red bilgilerini anında öğrenin.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- OOP Teknoloji Bilgisi -->
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card border-0 bg-light">
+            <div class="card-body">
+                <h5><i class="fas fa-code me-2 text-primary"></i>OOP Prensipleri</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success me-2"></i>Kapsülleme — Entity private setter'ları</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Kalıtım — Person → Employee → Doctor</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Çok Biçimlilik — GetDisplayRole(), CalculateConsultationFee()</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Soyutlama — IRepository, IService arayüzleri</li>
+                    <li><i class="fas fa-check text-success me-2"></i>Bileşim — Hospital → Branch → Department</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 bg-light">
+            <div class="card-body">
+                <h5><i class="fas fa-layer-group me-2 text-primary"></i>Teknoloji Yığını</h5>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-dot-circle text-info me-2"></i>C# 14 / .NET 10 LTS (macOS uyumlu)</li>
+                    <li><i class="fas fa-dot-circle text-info me-2"></i>ASP.NET Core 10 — Kestrel</li>
+                    <li><i class="fas fa-dot-circle text-info me-2"></i>Entity Framework Core 10 + PostgreSQL</li>
+                    <li><i class="fas fa-dot-circle text-info me-2"></i>ASP.NET Core Identity + JWT</li>
+                    <li><i class="fas fa-dot-circle text-info me-2"></i>Bootstrap 5 / Clean Architecture</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

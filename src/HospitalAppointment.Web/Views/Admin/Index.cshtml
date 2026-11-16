@@ -1,0 +1,123 @@
+@{
+    ViewData["Title"] = "Yönetim Paneli";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-tachometer-alt me-2 text-primary"></i>Yönetim Paneli</h2>
+    <span class="text-muted small"><i class="fas fa-clock me-1"></i>@DateTime.Now.ToString("dd MMMM yyyy, HH:mm", new System.Globalization.CultureInfo("tr-TR"))</span>
+</div>
+
+<!-- Ana İstatistik Kartları -->
+<div class="row g-3 mb-4">
+    <div class="col-md-2 col-sm-4">
+        <div class="card border-0 shadow-sm bg-primary text-white h-100">
+            <div class="card-body text-center py-3">
+                <i class="fas fa-hospital fa-2x mb-2 opacity-75"></i>
+                <div class="fs-2 fw-bold">@(ViewBag.HospitalCount ?? 0)</div>
+                <div class="small opacity-75">Hastane</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 col-sm-4">
+        <div class="card border-0 shadow-sm bg-info text-white h-100">
+            <div class="card-body text-center py-3">
+                <i class="fas fa-code-branch fa-2x mb-2 opacity-75"></i>
+                <div class="fs-2 fw-bold">@(ViewBag.BranchCount ?? 0)</div>
+                <div class="small opacity-75">Şube</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 col-sm-4">
+        <div class="card border-0 shadow-sm bg-secondary text-white h-100">
+            <div class="card-body text-center py-3">
+                <i class="fas fa-th-large fa-2x mb-2 opacity-75"></i>
+                <div class="fs-2 fw-bold">@(ViewBag.DepartmentCount ?? 0)</div>
+                <div class="small opacity-75">Bölüm</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 col-sm-4">
+        <div class="card border-0 shadow-sm bg-success text-white h-100">
+            <div class="card-body text-center py-3">
+                <i class="fas fa-user-md fa-2x mb-2 opacity-75"></i>
+                <div class="fs-2 fw-bold">@(ViewBag.DoctorCount ?? 0)</div>
+                <div class="small opacity-75">Doktor</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 col-sm-4">
+        <div class="card border-0 shadow-sm bg-warning h-100">
+            <div class="card-body text-center py-3">
+                <i class="fas fa-users fa-2x mb-2 opacity-75"></i>
+                <div class="fs-2 fw-bold">@(ViewBag.PatientCount ?? 0)</div>
+                <div class="small">Hasta</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 col-sm-4">
+        <div class="card border-0 shadow-sm bg-danger text-white h-100">
+            <div class="card-body text-center py-3">
+                <i class="fas fa-calendar-alt fa-2x mb-2 opacity-75"></i>
+                <div class="fs-2 fw-bold">@(ViewBag.AppointmentCount ?? 0)</div>
+                <div class="small opacity-75">Randevu</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light fw-semibold">
+                <i class="fas fa-chart-pie me-2 text-primary"></i>Randevu Durumları
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-calendar-day me-2 text-info"></i>Bugünkü</span>
+                        <span class="badge bg-info rounded-pill">@(ViewBag.TodayAppointments ?? 0)</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-hourglass-half me-2 text-warning"></i>Bekleyen</span>
+                        <span class="badge bg-warning text-dark rounded-pill">@(ViewBag.PendingAppointments ?? 0)</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-check-circle me-2 text-success"></i>Onaylanan</span>
+                        <span class="badge bg-success rounded-pill">@(ViewBag.ConfirmedAppointments ?? 0)</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-times-circle me-2 text-danger"></i>İptal Edilen</span>
+                        <span class="badge bg-danger rounded-pill">@(ViewBag.CancelledAppointments ?? 0)</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-flag-checkered me-2 text-secondary"></i>Tamamlanan</span>
+                        <span class="badge bg-secondary rounded-pill">@(ViewBag.CompletedAppointments ?? 0)</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-light fw-semibold">
+                <i class="fas fa-bolt me-2 text-warning"></i>Hızlı İşlemler
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a asp-controller="Hospital" asp-action="Index" class="btn btn-outline-primary">
+                        <i class="fas fa-hospital me-2"></i>Hastane Yönetimi
+                    </a>
+                    <a asp-controller="Doctor" asp-action="Create" class="btn btn-outline-success">
+                        <i class="fas fa-user-md me-2"></i>Yeni Doktor Ekle
+                    </a>
+                    <a asp-controller="Appointment" asp-action="Index" class="btn btn-outline-info">
+                        <i class="fas fa-calendar-alt me-2"></i>Tüm Randevular
+                    </a>
+                    <a asp-controller="Doctor" asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-list me-2"></i>Doktor Listesi
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

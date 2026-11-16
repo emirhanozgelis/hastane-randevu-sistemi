@@ -1,0 +1,58 @@
+/* Hastane Randevu Sistemi — Ana CSS */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar özelleştirme */
+.navbar-brand {
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+}
+
+/* Kart hover efekti */
+.card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.12) !important;
+}
+
+/* Durum rozeti renkleri */
+.badge.bg-pending { background-color: #ffc107; color: #000; }
+.badge.bg-confirmed { background-color: #198754; }
+.badge.bg-rejected { background-color: #dc3545; }
+.badge.bg-cancelled { background-color: #6c757d; }
+.badge.bg-completed { background-color: #0dcaf0; }
+.badge.bg-noshow { background-color: #212529; }
+
+/* Tablo özelleştirme */
+.table th {
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+/* Form özelleştirme */
+.form-label.fw-semibold {
+    color: #344050;
+}
+
+/* Hero section */
+.rounded-3 {
+    border-radius: 0.75rem !important;
+}
+
+/* Footer */
+footer {
+    font-size: 0.85rem;
+}

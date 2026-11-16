@@ -1,0 +1,66 @@
+@model IReadOnlyList<HospitalAppointment.Application.DTOs.Department.DepartmentDto>
+@{
+    ViewData["Title"] = "Bölüm Yönetimi";
+    var branchId = (Guid)ViewBag.BranchId;
+    var branchName = (string)(ViewBag.BranchName ?? "");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2><i class="fas fa-th-large me-2 text-primary"></i>Bölümler</h2>
+        <small class="text-muted">@branchName</small>
+    </div>
+    <a asp-action="Create" asp-route-branchId="@branchId" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Yeni Bölüm
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>Bu şubeye ait bölüm bulunamadı.
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var dept in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 @(!dept.IsActive ? "opacity-50" : "")">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-th-large me-2 text-primary"></i>@dept.Name
+                        </h5>
+                        <p class="card-text text-muted small">@(dept.Description ?? "Açıklama yok.")</p>
+                        <div class="d-flex gap-2 mt-2">
+                            <span class="badge bg-primary">@dept.DoctorCount doktor</span>
+                            <span class="badge bg-info">@dept.ServiceCount hizmet</span>
+                            <span class="badge @(dept.IsActive ? "bg-success" : "bg-danger")">
+                                @(dept.IsActive ? "Aktif" : "Pasif")
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 d-flex gap-2">
+                        <a asp-action="Edit" asp-route-id="@dept.Id"
+                           class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-edit me-1"></i>Düzenle
+                        </a>
+                        <a asp-controller="HealthcareService" asp-action="Index"
+                           asp-route-departmentId="@dept.Id"
+                           class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-list me-1"></i>Hizmetler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-controller="Branch" asp-action="Index" asp-route-hospitalId="@Model.FirstOrDefault()?.BranchId"
+       class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Şubelere Dön
+    </a>
+</div>
