@@ -58,9 +58,8 @@ public class CreateDoctorViewModel
     [Display(Name = "Bölüm")]
     public Guid DepartmentId { get; set; }
 
+    // Dropdown — ValidationPatterns.MedicalSpecializations listesinden seçilir
     [Required(ErrorMessage = "Uzmanlık alanı zorunludur.")]
-    [StringLength(150, MinimumLength = 2, ErrorMessage = "Uzmanlık alanı 2-150 karakter olmalıdır.")]
-    [RegularExpression(ValidationPatterns.Title, ErrorMessage = "Uzmanlık: " + ValidationPatterns.TitleError)]
     [Display(Name = "Uzmanlık Alanı")]
     public string Specialization { get; set; } = string.Empty;
 

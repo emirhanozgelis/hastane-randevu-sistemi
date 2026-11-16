@@ -31,7 +31,8 @@
                         </div>
                         <div class="col-md-5">
                             <label asp-for="PhoneNumber" class="form-label fw-semibold">Telefon</label>
-                            <input asp-for="PhoneNumber" class="form-control" placeholder="05xxxxxxxxx" />
+                            <input asp-for="PhoneNumber" class="form-control phone-mask"
+                                   placeholder="+90 (5__) ___ __ __" maxlength="19" />
                             <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
@@ -93,4 +94,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/phone-mask.js"></script>
 }

@@ -93,18 +93,26 @@ public abstract class Person : BaseEntity
             throw new ArgumentException("Geçerli bir e-posta adresi giriniz. Örn: ornek@mail.com", nameof(email));
     }
 
-    // Türkiye telefon formatı: 05xxxxxxxxx, +905xxxxxxxxx, 5xxxxxxxxx
+    // Telefon formatı: +90 (5xx) xxx xx xx — formdan gelen format veya rakam dizisi
     private static void ValidatePhone(string? phone)
     {
-        if (string.IsNullOrWhiteSpace(phone)) return; // telefon opsiyonel
-        var normalized = phone.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
-        if (!Regex.IsMatch(normalized, @"^(\+90|0)?5[0-9]{9}$"))
-            throw new ArgumentException("Geçerli bir Türk telefon numarası giriniz. Örn: 05321234567", nameof(phone));
+        if (string.IsNullOrWhiteSpace(phone)) return;
+        // Hem formatlanmış (+90 (5xx) xxx xx xx) hem ham (05xxxxxxxxx) kabul edilir
+        var stripped = phone.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "").Replace("+", "");
+        if (!Regex.IsMatch(stripped, @"^(90)?5[0-9]{9}$"))
+            throw new ArgumentException("Geçerli bir Türk telefon numarası giriniz.", nameof(phone));
     }
 
+    // Telefonu +90 (5xx) xxx xx xx formatına normalize eder
     private static string NormalizePhone(string? phone)
     {
         if (string.IsNullOrWhiteSpace(phone)) return string.Empty;
-        return phone.Trim().Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
+        var digits = Regex.Replace(phone, @"[^\d]", "");
+        // Başındaki 0 veya 90 kaldır, 10 haneli core numarayı al
+        if (digits.StartsWith("90") && digits.Length == 12) digits = digits[2..];
+        else if (digits.StartsWith("0") && digits.Length == 11) digits = digits[1..];
+        if (digits.Length == 10)
+            return $"+90 ({digits[..3]}) {digits[3..6]} {digits[6..8]} {digits[8..10]}";
+        return phone.Trim(); // format dışıysa olduğu gibi sakla
     }
 }

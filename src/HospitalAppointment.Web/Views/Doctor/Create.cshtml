@@ -31,7 +31,7 @@
                         </div>
                         <div class="col-md-5">
                             <label asp-for="PhoneNumber" class="form-label fw-semibold">Telefon</label>
-                            <input asp-for="PhoneNumber" class="form-control" placeholder="05xxxxxxxxx" />
+                            <input asp-for="PhoneNumber" class="form-control phone-mask" placeholder="+90 (5__) ___ __ __" maxlength="19" />
                             <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
                         </div>
                         <div class="col-md-4">
@@ -64,7 +64,13 @@
                         </div>
                         <div class="col-md-12">
                             <label asp-for="Specialization" class="form-label fw-semibold">Uzmanlık Alanı</label>
-                            <input asp-for="Specialization" class="form-control" placeholder="Kardiyoloji" />
+                            <select asp-for="Specialization" class="form-select">
+                                <option value="">— Uzmanlık seçin —</option>
+                                @foreach (var spec in HospitalAppointment.Web.Models.ValidationPatterns.MedicalSpecializations)
+                                {
+                                    <option value="@spec">@spec</option>
+                                }
+                            </select>
                             <span asp-validation-for="Specialization" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6">
@@ -109,6 +115,7 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/phone-mask.js"></script>
     <script>
     document.getElementById('branchSelectDoctor')?.addEventListener('change', async function () {
         const branchId = this.value;
