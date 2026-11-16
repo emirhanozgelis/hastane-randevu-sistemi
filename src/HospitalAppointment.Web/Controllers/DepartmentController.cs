@@ -24,11 +24,17 @@ public class DepartmentController : Controller
         _logger = logger;
     }
 
-    // Bölüm listesi
-    public async Task<IActionResult> Index(Guid branchId, CancellationToken cancellationToken)
+    // Bölüm listesi — branchId verilmezse yönlendir
+    public async Task<IActionResult> Index(Guid? branchId, CancellationToken cancellationToken)
     {
-        var departments = await _departmentService.GetDepartmentsByBranchAsync(branchId, cancellationToken);
-        var branch = await _branchService.GetBranchAsync(branchId, cancellationToken);
+        if (!branchId.HasValue || branchId == Guid.Empty)
+        {
+            TempData["Error"] = "Bölümleri görüntülemek için önce bir şube seçin.";
+            return RedirectToAction("Index", "Branch");
+        }
+
+        var departments = await _departmentService.GetDepartmentsByBranchAsync(branchId.Value, cancellationToken);
+        var branch = await _branchService.GetBranchAsync(branchId.Value, cancellationToken);
         ViewBag.BranchId = branchId;
         ViewBag.BranchName = branch?.Name ?? "Bilinmiyor";
         return View(departments);

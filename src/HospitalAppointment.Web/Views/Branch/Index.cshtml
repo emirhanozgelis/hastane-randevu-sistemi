@@ -1,8 +1,8 @@
 @model IReadOnlyList<HospitalAppointment.Application.DTOs.Branch.BranchDto>
 @{
     ViewData["Title"] = "Şube Yönetimi";
-    var hospitalId = (Guid)ViewBag.HospitalId;
-    var hospitalName = (string)(ViewBag.HospitalName ?? "");
+    var hospitalId = ViewBag.HospitalId is Guid hid ? hid : Guid.Empty;
+    var hospitalName = (string)(ViewBag.HospitalName ?? "Tüm Hastaneler");
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">

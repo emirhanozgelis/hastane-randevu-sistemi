@@ -24,11 +24,17 @@ public class HealthcareServiceController : Controller
         _logger = logger;
     }
 
-    // Hizmet listesi bölüme göre
-    public async Task<IActionResult> Index(Guid departmentId, CancellationToken cancellationToken)
+    // Hizmet listesi — departmentId verilmezse yönlendir
+    public async Task<IActionResult> Index(Guid? departmentId, CancellationToken cancellationToken)
     {
-        var services = await _serviceService.GetServicesByDepartmentAsync(departmentId, cancellationToken);
-        var department = await _departmentService.GetDepartmentAsync(departmentId, cancellationToken);
+        if (!departmentId.HasValue || departmentId == Guid.Empty)
+        {
+            TempData["Error"] = "Hizmetleri görüntülemek için önce bir bölüm seçin.";
+            return RedirectToAction("Index", "Branch");
+        }
+
+        var services = await _serviceService.GetServicesByDepartmentAsync(departmentId.Value, cancellationToken);
+        var department = await _departmentService.GetDepartmentAsync(departmentId.Value, cancellationToken);
         ViewBag.DepartmentId = departmentId;
         ViewBag.DepartmentName = department?.Name ?? "Bilinmiyor";
         return View(services);

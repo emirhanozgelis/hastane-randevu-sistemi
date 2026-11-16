@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Hata";
+}
+
+<div class="text-center py-5">
+    <i class="fas fa-exclamation-triangle fa-5x text-warning mb-4"></i>
+    <h2 class="text-danger">Bir Hata Oluştu</h2>
+    <p class="text-muted fs-5">İşlem gerçekleştirilirken beklenmeyen bir hata oluştu.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary me-2">
+        <i class="fas fa-home me-2"></i>Ana Sayfaya Dön
+    </a>
+    <button onclick="history.back()" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Geri Dön
+    </button>
+</div>

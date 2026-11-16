@@ -24,14 +24,33 @@ public class BranchController : Controller
         _logger = logger;
     }
 
-    // Şube listesi (opsiyonel hastane filtresi)
-    public async Task<IActionResult> Index(Guid hospitalId, CancellationToken cancellationToken)
+    // Şube listesi — hospitalId verilmezse tüm hastanelerin şubeleri gösterilir
+    public async Task<IActionResult> Index(Guid? hospitalId, CancellationToken cancellationToken)
     {
-        var branches = await _branchService.GetBranchesByHospitalAsync(hospitalId, cancellationToken);
-        var hospital = await _hospitalService.GetHospitalAsync(hospitalId, cancellationToken);
-        ViewBag.HospitalId = hospitalId;
-        ViewBag.HospitalName = hospital?.Name ?? "Bilinmiyor";
-        return View(branches);
+        var hospitals = await _hospitalService.GetAllHospitalsAsync(cancellationToken);
+
+        if (hospitalId.HasValue && hospitalId != Guid.Empty)
+        {
+            var branches = await _branchService.GetBranchesByHospitalAsync(hospitalId.Value, cancellationToken);
+            var hospital = hospitals.FirstOrDefault(h => h.Id == hospitalId.Value);
+            ViewBag.HospitalId = hospitalId;
+            ViewBag.HospitalName = hospital?.Name ?? "Bilinmiyor";
+            ViewBag.Hospitals = hospitals;
+            return View(branches);
+        }
+
+        // Hastane seçilmemişse: tüm hastanelerin şubelerini topla
+        var allBranches = new List<Application.DTOs.Branch.BranchDto>();
+        foreach (var h in hospitals)
+        {
+            var hBranches = await _branchService.GetBranchesByHospitalAsync(h.Id, cancellationToken);
+            allBranches.AddRange(hBranches);
+        }
+
+        ViewBag.HospitalId = Guid.Empty;
+        ViewBag.HospitalName = "Tüm Hastaneler";
+        ViewBag.Hospitals = hospitals;
+        return View(allBranches.AsReadOnly());
     }
 
     // Yeni şube oluşturma formu
