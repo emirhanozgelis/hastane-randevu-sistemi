@@ -1,179 +1,141 @@
 @{
     ViewData["Title"] = "Ana Sayfa";
-    Layout = null;
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MediRandevu — Online Randevu Sistemi</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-</head>
-<body>
 
-@* Navbar *@
-<nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="/">
-            <span class="brand-icon"><i class="fas fa-heartbeat"></i></span>
-            MediRandevu
-        </a>
-        <div class="d-flex align-items-center gap-2">
-            <a asp-controller="Doctor" asp-action="Index" class="nav-link text-white d-none d-md-block me-2">Doktorlar</a>
-            @if (User.Identity?.IsAuthenticated == true)
-            {
-                <a asp-controller="Appointment" asp-action="Index" class="btn btn-sm btn-outline-light rounded-pill px-3">
-                    Randevularım
-                </a>
-            }
-            else
-            {
-                <a asp-controller="Account" asp-action="Login" class="nav-link text-white me-1">Giriş</a>
-                <a asp-controller="Account" asp-action="Register" class="btn btn-sm btn-outline-light rounded-pill px-3">
-                    Kayıt Ol
-                </a>
-            }
-        </div>
-    </div>
-</nav>
+@* Hero — container dışında tam genişlik için override *@
+<style>
+    .home-hero {
+        background: linear-gradient(135deg, var(--primary-dk) 0%, #1976D2 60%, var(--accent) 100%);
+        color: #fff;
+        margin: -1.5rem -12px 2rem;
+        padding: 4rem 1rem 3.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .home-hero::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+</style>
 
-@* Hero *@
-<section class="hero">
-    <div class="container text-center position-relative">
-        <span class="badge mb-3 px-3 py-2" style="background:rgba(255,255,255,.15);font-size:.85rem;border-radius:20px;">
-            <i class="fas fa-shield-alt me-1"></i>Güvenli &middot; Hızlı &middot; 7/24
-        </span>
-        <h1 class="display-5 fw-800 mb-3">Sağlığınız İçin<br>Doğru Adres</h1>
-        <p class="lead col-md-7 mx-auto mb-4">
-            İstediğiniz doktoru seçin, uygun saati belirleyin.<br>
-            Randevunuzu dakikalar içinde oluşturun.
-        </p>
-        @if (!User.Identity!.IsAuthenticated)
-        {
-            <div class="d-flex gap-3 justify-content-center flex-wrap">
-                <a asp-controller="Account" asp-action="Register"
-                   class="btn btn-light btn-lg px-4 shadow-sm"
-                   style="color:var(--primary-dk);font-weight:700;">
-                    <i class="fas fa-calendar-plus me-2"></i>Hemen Randevu Al
-                </a>
-                <a asp-controller="Doctor" asp-action="Index"
-                   class="btn btn-outline-light btn-lg px-4">
-                    <i class="fas fa-user-md me-2"></i>Doktorları Gör
-                </a>
-            </div>
-        }
-        else
-        {
-            <a asp-controller="Appointment" asp-action="Create"
-               class="btn btn-light btn-lg px-5 shadow-sm"
+<div class="home-hero text-center position-relative">
+    <span class="badge mb-3 px-3 py-2" style="background:rgba(255,255,255,.15);font-size:.85rem;border-radius:20px;">
+        <i class="fas fa-shield-alt me-1"></i>Güvenli &middot; Hızlı &middot; 7/24
+    </span>
+    <h1 class="display-5 mb-3" style="font-weight:800">Sağlığınız İçin<br>Doğru Adres</h1>
+    <p class="mb-4 col-md-6 mx-auto" style="opacity:.9;font-size:1.1rem">
+        İstediğiniz doktoru seçin, uygun saati belirleyin.<br>
+        Randevunuzu dakikalar içinde oluşturun.
+    </p>
+    @if (!User.Identity!.IsAuthenticated)
+    {
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a asp-controller="Account" asp-action="Register"
+               class="btn btn-light btn-lg px-4 shadow-sm"
                style="color:var(--primary-dk);font-weight:700;">
-                <i class="fas fa-calendar-plus me-2"></i>Yeni Randevu Oluştur
+                <i class="fas fa-calendar-plus me-2"></i>Hemen Randevu Al
             </a>
-        }
-    </div>
-</section>
+            <a asp-controller="Doctor" asp-action="Index"
+               class="btn btn-outline-light btn-lg px-4">
+                <i class="fas fa-user-md me-2"></i>Doktorları Gör
+            </a>
+        </div>
+    }
+    else if (User.IsInRole("Patient"))
+    {
+        <a asp-controller="Appointment" asp-action="Create"
+           class="btn btn-light btn-lg px-5 shadow-sm"
+           style="color:var(--primary-dk);font-weight:700;">
+            <i class="fas fa-calendar-plus me-2"></i>Yeni Randevu Oluştur
+        </a>
+    }
+    else if (User.IsInRole("Admin") || User.IsInRole("HospitalManager"))
+    {
+        <a asp-controller="Admin" asp-action="Index"
+           class="btn btn-light btn-lg px-5 shadow-sm"
+           style="color:var(--primary-dk);font-weight:700;">
+            <i class="fas fa-tachometer-alt me-2"></i>Yönetim Paneline Git
+        </a>
+    }
+</div>
 
-@* Özellikler *@
-<section class="py-5">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm p-1">
-                    <div class="card-body p-4">
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3"
-                             style="width:52px;height:52px;background:var(--primary-lt);">
-                            <i class="fas fa-search fa-lg" style="color:var(--primary)"></i>
-                        </div>
-                        <h5 class="fw-700 mb-2">Doktor Ara</h5>
-                        <p class="text-muted mb-0" style="font-size:.92rem;line-height:1.6">
-                            Uzmanlık alanına, şubeye veya bölüme göre filtreleyerek size en uygun doktoru bulun.
-                        </p>
-                    </div>
+@* Özellik Kartları *@
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3"
+                     style="width:52px;height:52px;background:var(--primary-lt);">
+                    <i class="fas fa-search fa-lg" style="color:var(--primary)"></i>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm p-1">
-                    <div class="card-body p-4">
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3"
-                             style="width:52px;height:52px;background:var(--accent-lt);">
-                            <i class="fas fa-clock fa-lg" style="color:var(--accent)"></i>
-                        </div>
-                        <h5 class="fw-700 mb-2">Müsait Saatler</h5>
-                        <p class="text-muted mb-0" style="font-size:.92rem;line-height:1.6">
-                            Doktorun gerçek çalışma takvimine göre müsait saatler anlık olarak listelenir.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm p-1">
-                    <div class="card-body p-4">
-                        <div class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3"
-                             style="width:52px;height:52px;background:#FFF3E0;">
-                            <i class="fas fa-bell fa-lg" style="color:#E65100"></i>
-                        </div>
-                        <h5 class="fw-700 mb-2">Anlık Bildirim</h5>
-                        <p class="text-muted mb-0" style="font-size:.92rem;line-height:1.6">
-                            Randevu onay, red veya iptal bilgilerini sistem üzerinden anında takip edin.
-                        </p>
-                    </div>
-                </div>
+                <h5 class="fw-700 mb-2">Doktor Ara</h5>
+                <p class="text-muted mb-0" style="font-size:.92rem;line-height:1.6">
+                    Uzmanlık alanına, şubeye veya bölüme göre filtreleyerek size en uygun doktoru bulun.
+                </p>
             </div>
         </div>
     </div>
-</section>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3"
+                     style="width:52px;height:52px;background:var(--accent-lt);">
+                    <i class="fas fa-clock fa-lg" style="color:var(--accent)"></i>
+                </div>
+                <h5 class="fw-700 mb-2">Müsait Saatler</h5>
+                <p class="text-muted mb-0" style="font-size:.92rem;line-height:1.6">
+                    Doktorun gerçek çalışma takvimine göre müsait saatler anlık olarak listelenir.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-3 mb-3"
+                     style="width:52px;height:52px;background:#FFF3E0;">
+                    <i class="fas fa-bell fa-lg" style="color:#E65100"></i>
+                </div>
+                <h5 class="fw-700 mb-2">Anlık Bildirim</h5>
+                <p class="text-muted mb-0" style="font-size:.92rem;line-height:1.6">
+                    Randevu onay, red veya iptal bilgilerini sistem üzerinden anında takip edin.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 
 @* İstatistik bandı *@
-<section style="background:var(--primary-lt);border-top:1px solid #BBDEFB;border-bottom:1px solid #BBDEFB" class="py-4">
-    <div class="container">
-        <div class="row text-center g-4">
-            <div class="col-6 col-md-3">
-                <div class="fw-800 mb-1" style="font-size:1.9rem;color:var(--primary)">1</div>
-                <div class="text-muted" style="font-size:.88rem">Hastane</div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="fw-800 mb-1" style="font-size:1.9rem;color:var(--primary)">2</div>
-                <div class="text-muted" style="font-size:.88rem">Şube</div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="fw-800 mb-1" style="font-size:1.9rem;color:var(--primary)">35+</div>
-                <div class="text-muted" style="font-size:.88rem">Uzmanlık Alanı</div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="fw-800 mb-1" style="font-size:1.9rem;color:var(--primary)">7/24</div>
-                <div class="text-muted" style="font-size:.88rem">Çevrimiçi Erişim</div>
-            </div>
+<div class="rounded-3 p-4 mb-4" style="background:var(--primary-lt);border:1px solid #BBDEFB">
+    <div class="row text-center g-3">
+        <div class="col-6 col-md-3">
+            <div class="fw-800 mb-1" style="font-size:1.9rem;color:var(--primary)">1</div>
+            <div class="text-muted" style="font-size:.88rem">Hastane</div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="fw-800 mb-1" style="font-size:1.9rem;color:var(--primary)">2</div>
+            <div class="text-muted" style="font-size:.88rem">Şube</div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="fw-800 mb-1" style="font-size:1.9rem;color:var(--primary)">35+</div>
+            <div class="text-muted" style="font-size:.88rem">Uzmanlık Alanı</div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="fw-800 mb-1" style="font-size:1.9rem;color:var(--primary)">7/24</div>
+            <div class="text-muted" style="font-size:.88rem">Çevrimiçi Erişim</div>
         </div>
     </div>
-</section>
+</div>
 
-@* CTA *@
 @if (!User.Identity!.IsAuthenticated)
 {
-    <section class="py-5">
-        <div class="container text-center">
-            <h4 class="fw-700 mb-2">Hesabınız yok mu?</h4>
-            <p class="text-muted mb-4">Ücretsiz kayıt olun, saniyeler içinde randevu alın.</p>
-            <a asp-controller="Account" asp-action="Register"
-               class="btn btn-primary btn-lg px-5">
-                <i class="fas fa-user-plus me-2"></i>Kayıt Ol — Ücretsiz
-            </a>
-        </div>
-    </section>
-}
-
-<footer>
-    <div class="container d-flex justify-content-between align-items-center">
-        <span><i class="fas fa-heartbeat text-danger me-1"></i> MediRandevu &copy; 2026</span>
-        <span class="text-muted">Güvenli Sağlık Randevu Sistemi</span>
+    <div class="text-center py-3">
+        <h5 class="fw-700 mb-2">Hesabınız yok mu?</h5>
+        <p class="text-muted mb-3">Ücretsiz kayıt olun, saniyeler içinde randevu alın.</p>
+        <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-5">
+            <i class="fas fa-user-plus me-2"></i>Kayıt Ol — Ücretsiz
+        </a>
     </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+}
