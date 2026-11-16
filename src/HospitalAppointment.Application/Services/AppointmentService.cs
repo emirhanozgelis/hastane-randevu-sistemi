@@ -278,6 +278,65 @@ public sealed class AppointmentService : IAppointmentService
         await _appointmentRepository.AddStatusHistoryAsync(appointmentId, AppointmentStatus.NoShow, markedBy, "Hasta randevuya gelmedi.", cancellationToken);
     }
 
+    public async Task<IReadOnlyList<AvailableSlotDto>> GetAvailableSlotsAsync(
+        Guid doctorId,
+        Guid serviceId,
+        DateOnly date,
+        CancellationToken cancellationToken = default)
+    {
+        // Doktoru müsaitlik kayıtlarıyla yükle
+        var doctor = await _doctorRepository.GetWithDetailsAsync(doctorId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Doktor bulunamadı: {doctorId}");
+
+        var service = await _healthcareServiceRepository.GetByIdAsync(serviceId, cancellationToken)
+            ?? throw new KeyNotFoundException($"Sağlık hizmeti bulunamadı: {serviceId}");
+
+        // O gün için müsaitlik penceresi — domain metodu
+        var dayOfWeek = date.DayOfWeek;
+        var availability = doctor.Availabilities
+            .Where(a => a.IsAvailable)
+            .FirstOrDefault(a =>
+                (a.IsSpecificDate && a.Date == date) ||
+                (!a.IsSpecificDate && a.DayOfWeek == dayOfWeek));
+
+        if (availability == null)
+            return [];   // O gün müsait değil
+
+        // Mevcut randevular — iptal/red hariç
+        var existingAppointments = await _appointmentRepository.GetByDoctorIdAsync(doctorId, date, cancellationToken);
+        var bookedSlots = existingAppointments
+            .Where(a => a.Status is not AppointmentStatus.Cancelled and not AppointmentStatus.Rejected)
+            .Select(a => (a.StartTime, a.EndTime))
+            .ToList();
+
+        // Hizmet süresine göre slotlar üret
+        var slots = new List<AvailableSlotDto>();
+        var slotStart = availability.StartTime;
+        var duration = service.Duration;
+
+        while (slotStart.Add(duration) <= availability.EndTime)
+        {
+            var slotEnd = slotStart.Add(duration);
+
+            // Mevcut randevuyla çakışıyor mu — NewStart < ExistingEnd AND NewEnd > ExistingStart
+            var hasConflict = bookedSlots.Any(b =>
+                slotStart < b.EndTime && slotEnd > b.StartTime);
+
+            if (!hasConflict)
+            {
+                slots.Add(new AvailableSlotDto(
+                    StartTime: slotStart,
+                    EndTime: slotEnd,
+                    Display: $"{slotStart:HH:mm} – {slotEnd:HH:mm}",
+                    StartTimeValue: slotStart.ToString("HH:mm:ss")));
+            }
+
+            slotStart = slotStart.Add(duration);
+        }
+
+        return slots.AsReadOnly();
+    }
+
     // Navigasyon özellikleri yüklü Appointment -> AppointmentDto dönüşümü
     private static AppointmentDto MapToDto(Appointment a) => new(
         Id: a.Id,

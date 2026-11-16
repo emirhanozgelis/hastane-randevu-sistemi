@@ -291,6 +291,44 @@ public class AppointmentController : Controller
         catch { return Json(Array.Empty<object>()); }
     }
 
+    // Doktor + hizmet + tarih seçilince müsait slotları döndürür — JSON
+    [HttpGet]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetAvailableSlots(
+        Guid doctorId, Guid serviceId, string date,
+        CancellationToken cancellationToken)
+    {
+        if (doctorId == Guid.Empty || serviceId == Guid.Empty || string.IsNullOrEmpty(date))
+            return Json(Array.Empty<object>());
+
+        try
+        {
+            if (!DateOnly.TryParse(date, out var parsedDate))
+                return Json(Array.Empty<object>());
+
+            if (parsedDate < DateOnly.FromDateTime(DateTime.Today))
+                return Json(new { error = "Geçmiş bir tarih için randevu oluşturulamaz." });
+
+            var slots = await _appointmentService.GetAvailableSlotsAsync(
+                doctorId, serviceId, parsedDate, cancellationToken);
+
+            if (!slots.Any())
+                return Json(new { empty = true, message = "Seçilen tarihte müsait saat yok." });
+
+            return Json(slots.Select(s => new
+            {
+                value = s.StartTimeValue,
+                display = s.Display,
+                start = s.StartTime.ToString("HH:mm"),
+                end = s.EndTime.ToString("HH:mm")
+            }));
+        }
+        catch
+        {
+            return Json(new { error = "Müsaitlik bilgisi alınamadı." });
+        }
+    }
+
     // ─── Yardımcı Metot ───────────────────────────────────────────────────────
 
     private async Task PopulateDropdowns(AppointmentViewModel vm, CancellationToken cancellationToken)

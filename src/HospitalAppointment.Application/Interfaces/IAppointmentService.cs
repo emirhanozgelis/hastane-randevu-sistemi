@@ -16,4 +16,9 @@ public interface IAppointmentService
     Task CancelAppointmentAsync(Guid appointmentId, string cancelledBy, string? reason = null, CancellationToken cancellationToken = default);
     Task CompleteAppointmentAsync(Guid appointmentId, string completedBy, string? doctorNotes = null, CancellationToken cancellationToken = default);
     Task MarkAsNoShowAsync(Guid appointmentId, string markedBy, CancellationToken cancellationToken = default);
+
+    // Seçilen doktor, hizmet ve tarihe göre müsait saat slotlarını döndürür
+    Task<IReadOnlyList<AvailableSlotDto>> GetAvailableSlotsAsync(
+        Guid doctorId, Guid serviceId, DateOnly date,
+        CancellationToken cancellationToken = default);
 }

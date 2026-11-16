@@ -4,7 +4,7 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-9">
         <div class="card shadow border-0">
             <div class="card-header bg-primary text-white py-3">
                 <h4 class="mb-0"><i class="fas fa-calendar-plus me-2"></i>Yeni Randevu Oluştur</h4>
@@ -12,108 +12,134 @@
             <div class="card-body p-4">
                 <form asp-action="Create" method="post" id="appointmentForm">
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <input asp-for="StartTime" type="hidden" id="startTimeHidden" />
 
-                    <!-- Adım 1: Hastane -->
-                    <div class="mb-3">
-                        <label asp-for="HospitalId" class="form-label fw-semibold">
-                            <span class="badge bg-primary me-1">1</span> Hastane
-                        </label>
-                        <select asp-for="HospitalId" asp-items="Model.Hospitals"
-                                class="form-select" id="hospitalSelect">
-                            <option value="">— Hastane seçin —</option>
-                        </select>
-                        <span asp-validation-for="HospitalId" class="text-danger small"></span>
-                    </div>
+                    <!-- Adımlar -->
+                    <div class="row g-3">
 
-                    <!-- Adım 2: Şube -->
-                    <div class="mb-3">
-                        <label asp-for="BranchId" class="form-label fw-semibold">
-                            <span class="badge bg-primary me-1">2</span> Şube
-                        </label>
-                        <select asp-for="BranchId" class="form-select" id="branchSelect" disabled>
-                            <option value="">— Önce hastane seçin —</option>
-                        </select>
-                        <span asp-validation-for="BranchId" class="text-danger small"></span>
-                    </div>
-
-                    <!-- Adım 3: Bölüm -->
-                    <div class="mb-3">
-                        <label asp-for="DepartmentId" class="form-label fw-semibold">
-                            <span class="badge bg-primary me-1">3</span> Bölüm
-                        </label>
-                        <select asp-for="DepartmentId" class="form-select" id="departmentSelect" disabled>
-                            <option value="">— Önce şube seçin —</option>
-                        </select>
-                        <span asp-validation-for="DepartmentId" class="text-danger small"></span>
-                    </div>
-
-                    <!-- Adım 4: Doktor -->
-                    <div class="mb-3">
-                        <label asp-for="DoctorId" class="form-label fw-semibold">
-                            <span class="badge bg-primary me-1">4</span> Doktor
-                        </label>
-                        <select asp-for="DoctorId" class="form-select" id="doctorSelect" disabled>
-                            <option value="">— Önce bölüm seçin —</option>
-                        </select>
-                        <span asp-validation-for="DoctorId" class="text-danger small"></span>
-                    </div>
-
-                    <!-- Adım 5: Sağlık Hizmeti -->
-                    <div class="mb-3">
-                        <label asp-for="HealthcareServiceId" class="form-label fw-semibold">
-                            <span class="badge bg-primary me-1">5</span> Sağlık Hizmeti
-                        </label>
-                        <select asp-for="HealthcareServiceId" class="form-select" id="serviceSelect" disabled>
-                            <option value="">— Önce bölüm seçin —</option>
-                        </select>
-                        <span asp-validation-for="HealthcareServiceId" class="text-danger small"></span>
-                    </div>
-
-                    <!-- Adım 6: Tarih ve Saat -->
-                    <div class="row g-3 mb-3">
+                        <!-- 1. Hastane -->
                         <div class="col-md-6">
-                            <label asp-for="AppointmentDate" class="form-label fw-semibold">
-                                <span class="badge bg-primary me-1">6</span> Tarih
+                            <label class="form-label fw-semibold">
+                                <span class="badge bg-primary me-1">1</span>Hastane
+                            </label>
+                            <select asp-for="HospitalId" asp-items="Model.Hospitals"
+                                    class="form-select" id="hospitalSelect">
+                                <option value="">— Hastane seçin —</option>
+                            </select>
+                            <span asp-validation-for="HospitalId" class="text-danger small"></span>
+                        </div>
+
+                        <!-- 2. Şube -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <span class="badge bg-primary me-1">2</span>Şube
+                            </label>
+                            <select asp-for="BranchId" class="form-select" id="branchSelect" disabled>
+                                <option value="">— Önce hastane seçin —</option>
+                            </select>
+                            <span asp-validation-for="BranchId" class="text-danger small"></span>
+                        </div>
+
+                        <!-- 3. Bölüm -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <span class="badge bg-primary me-1">3</span>Bölüm
+                            </label>
+                            <select asp-for="DepartmentId" class="form-select" id="departmentSelect" disabled>
+                                <option value="">— Önce şube seçin —</option>
+                            </select>
+                            <span asp-validation-for="DepartmentId" class="text-danger small"></span>
+                        </div>
+
+                        <!-- 4. Doktor -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <span class="badge bg-primary me-1">4</span>Doktor
+                            </label>
+                            <select asp-for="DoctorId" class="form-select" id="doctorSelect" disabled>
+                                <option value="">— Önce bölüm seçin —</option>
+                            </select>
+                            <span asp-validation-for="DoctorId" class="text-danger small"></span>
+                        </div>
+
+                        <!-- 5. Hizmet -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <span class="badge bg-primary me-1">5</span>Sağlık Hizmeti
+                            </label>
+                            <select asp-for="HealthcareServiceId" class="form-select" id="serviceSelect" disabled>
+                                <option value="">— Önce bölüm seçin —</option>
+                            </select>
+                            <span asp-validation-for="HealthcareServiceId" class="text-danger small"></span>
+                        </div>
+
+                        <!-- 6. Tarih -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <span class="badge bg-primary me-1">6</span>Tarih
                             </label>
                             <input asp-for="AppointmentDate" class="form-control" type="date"
-                                   min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")"
-                                   max="@DateTime.Today.AddMonths(3).ToString("yyyy-MM-dd")" />
+                                   id="dateInput"
+                                   min="@(DateTime.Today.AddDays(1).ToString("yyyy-MM-dd"))"
+                                   max="@(DateTime.Today.AddMonths(3).ToString("yyyy-MM-dd"))"
+                                   disabled />
                             <span asp-validation-for="AppointmentDate" class="text-danger small"></span>
                         </div>
-                        <div class="col-md-6">
-                            <label asp-for="StartTime" class="form-label fw-semibold">
-                                <span class="badge bg-primary me-1">7</span> Saat
-                            </label>
-                            <select asp-for="StartTime" class="form-select" id="timeSelect">
-                                <option value="">— Saat seçin —</option>
-                                @for (int h = 8; h < 18; h++)
-                                {
-                                    @for (int m = 0; m < 60; m += 30)
-                                    {
-                                        var t = new TimeOnly(h, m);
-                                        <option value="@t.ToString("HH:mm:ss")">@t.ToString("HH:mm")</option>
-                                    }
-                                }
-                            </select>
-                            <span asp-validation-for="StartTime" class="text-danger small"></span>
+
+                    </div>
+
+                    <!-- 7. Müsait Saatler — tarih + doktor + hizmet seçilince yüklenir -->
+                    <div class="mt-4" id="slotsSection" style="display:none">
+                        <label class="form-label fw-semibold">
+                            <span class="badge bg-primary me-1">7</span>Müsait Saatler
+                            <small id="doctorNameBadge" class="text-muted fw-normal ms-2"></small>
+                        </label>
+
+                        <div id="slotsContainer">
+                            <div id="slotsLoading" class="text-muted" style="display:none">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Saatler yükleniyor...
+                            </div>
+                            <div id="slotsEmpty" class="alert alert-warning" style="display:none">
+                                <i class="fas fa-exclamation-circle me-2"></i>
+                                <span id="slotsEmptyMsg">Bu tarihte müsait saat bulunamadı.</span>
+                            </div>
+                            <div id="slotsGrid" class="d-flex flex-wrap gap-2"></div>
                         </div>
+                        <span asp-validation-for="StartTime" class="text-danger small"></span>
                     </div>
 
                     <!-- Notlar -->
-                    <div class="mb-4">
+                    <div class="mt-3" id="notesSection" style="display:none">
                         <label asp-for="Notes" class="form-label fw-semibold">Notlar (opsiyonel)</label>
                         <textarea asp-for="Notes" class="form-control" rows="2"
                                   placeholder="Şikayetiniz veya özel bir notunuz varsa yazabilirsiniz."></textarea>
                     </div>
 
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <!-- Özet ve Gönder -->
+                    <div class="mt-4" id="summarySection" style="display:none">
+                        <div class="alert alert-info d-flex align-items-center gap-3" id="appointmentSummary">
+                            <i class="fas fa-calendar-check fa-2x"></i>
+                            <div>
+                                <strong id="summaryDoctor"></strong><br>
+                                <span id="summaryService" class="text-muted"></span> |
+                                <strong id="summaryDateTime" class="text-primary"></strong>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-1"></i>İptal
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn" disabled>
+                                <i class="fas fa-calendar-check me-2"></i>Randevuyu Onayla
+                            </button>
+                        </div>
+                    </div>
+                    <div id="initialButtons" class="d-flex justify-content-end mt-3">
                         <a asp-action="Index" class="btn btn-outline-secondary">
                             <i class="fas fa-times me-1"></i>İptal
                         </a>
-                        <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
-                            <i class="fas fa-calendar-check me-2"></i>Randevu Oluştur
-                        </button>
                     </div>
+
                 </form>
             </div>
         </div>
@@ -123,13 +149,18 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-    // Cascading dropdown — vanilla JS, framework gerektirmez
     (function () {
         const baseUrl = '/Appointment';
+        let selectedSlot = null;
+        let doctorName = '';
+        let serviceName = '';
+
+        // ─── Yardımcı fonksiyonlar ────────────────────────────────────────────
 
         function resetSelect(sel, placeholder) {
             sel.innerHTML = `<option value="">${placeholder}</option>`;
             sel.disabled = true;
+            sel.value = '';
         }
 
         function fillSelect(sel, items, placeholder) {
@@ -145,87 +176,178 @@
 
         async function fetchJson(url) {
             const r = await fetch(url);
-            if (!r.ok) return [];
+            if (!r.ok) return null;
             return r.json();
         }
 
-        function checkSubmitReady() {
-            const allFilled = ['hospitalSelect','branchSelect','departmentSelect',
-                               'doctorSelect','serviceSelect','timeSelect']
-                .every(id => document.getElementById(id)?.value);
-            const dateVal = document.getElementById('AppointmentDate')?.value;
-            document.getElementById('submitBtn').disabled = !(allFilled && dateVal);
+        // ─── Slot grid ────────────────────────────────────────────────────────
+
+        function clearSlots() {
+            selectedSlot = null;
+            document.getElementById('startTimeHidden').value = '';
+            document.getElementById('slotsGrid').innerHTML = '';
+            document.getElementById('slotsEmpty').style.display = 'none';
+            document.getElementById('summarySection').style.display = 'none';
+            document.getElementById('initialButtons').style.display = 'flex';
+            document.getElementById('submitBtn').disabled = true;
         }
 
-        // Hastane değişince şubeleri yükle
+        async function loadSlots() {
+            const doctorId = document.getElementById('doctorSelect').value;
+            const serviceId = document.getElementById('serviceSelect').value;
+            const date = document.getElementById('dateInput').value;
+
+            if (!doctorId || !serviceId || !date) return;
+
+            clearSlots();
+            document.getElementById('slotsSection').style.display = 'block';
+            document.getElementById('slotsLoading').style.display = 'block';
+            document.getElementById('notesSection').style.display = 'none';
+
+            const data = await fetchJson(
+                `${baseUrl}/GetAvailableSlots?doctorId=${doctorId}&serviceId=${serviceId}&date=${date}`
+            );
+
+            document.getElementById('slotsLoading').style.display = 'none';
+
+            if (!data || data.error) {
+                document.getElementById('slotsEmpty').style.display = 'block';
+                document.getElementById('slotsEmptyMsg').textContent =
+                    data?.error || 'Bu tarihte müsait saat bulunamadı.';
+                return;
+            }
+
+            if (data.empty) {
+                document.getElementById('slotsEmpty').style.display = 'block';
+                document.getElementById('slotsEmptyMsg').textContent = data.message;
+                return;
+            }
+
+            const grid = document.getElementById('slotsGrid');
+            data.forEach(slot => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn btn-outline-primary slot-btn';
+                btn.dataset.value = slot.value;
+                btn.dataset.display = slot.display;
+                btn.innerHTML = `<i class="fas fa-clock me-1"></i>${slot.start}`;
+                btn.title = slot.display;
+
+                btn.addEventListener('click', function () {
+                    document.querySelectorAll('.slot-btn').forEach(b => {
+                        b.classList.remove('btn-primary');
+                        b.classList.add('btn-outline-primary');
+                    });
+                    this.classList.remove('btn-outline-primary');
+                    this.classList.add('btn-primary');
+
+                    selectedSlot = slot;
+                    document.getElementById('startTimeHidden').value = slot.value;
+
+                    // Özet güncelle
+                    const dateVal = document.getElementById('dateInput').value;
+                    document.getElementById('summaryDoctor').textContent = 'Dr. ' + doctorName;
+                    document.getElementById('summaryService').textContent = serviceName;
+                    document.getElementById('summaryDateTime').textContent =
+                        new Date(dateVal).toLocaleDateString('tr-TR', {day:'2-digit',month:'long',year:'numeric'})
+                        + ' — ' + slot.display;
+
+                    document.getElementById('summarySection').style.display = 'block';
+                    document.getElementById('initialButtons').style.display = 'none';
+                    document.getElementById('notesSection').style.display = 'block';
+                    document.getElementById('submitBtn').disabled = false;
+                });
+
+                grid.appendChild(btn);
+            });
+        }
+
+        // ─── Cascading dropdown olayları ──────────────────────────────────────
+
         document.getElementById('hospitalSelect').addEventListener('change', async function () {
             const id = this.value;
             const branchSel = document.getElementById('branchSelect');
-            const deptSel   = document.getElementById('departmentSelect');
-            const docSel    = document.getElementById('doctorSelect');
-            const svcSel    = document.getElementById('serviceSelect');
-
             resetSelect(branchSel, '— Yükleniyor... —');
-            resetSelect(deptSel,   '— Önce şube seçin —');
-            resetSelect(docSel,    '— Önce bölüm seçin —');
-            resetSelect(svcSel,    '— Önce bölüm seçin —');
-
-            if (!id) { resetSelect(branchSel, '— Önce hastane seçin —'); checkSubmitReady(); return; }
-
+            resetSelect(document.getElementById('departmentSelect'), '— Önce şube seçin —');
+            resetSelect(document.getElementById('doctorSelect'), '— Önce bölüm seçin —');
+            resetSelect(document.getElementById('serviceSelect'), '— Önce bölüm seçin —');
+            document.getElementById('dateInput').disabled = true;
+            document.getElementById('slotsSection').style.display = 'none';
+            clearSlots();
+            if (!id) { resetSelect(branchSel, '— Önce hastane seçin —'); return; }
             const data = await fetchJson(`${baseUrl}/GetBranches?hospitalId=${id}`);
-            fillSelect(branchSel, data, '— Şube seçin —');
-            checkSubmitReady();
+            fillSelect(branchSel, data || [], '— Şube seçin —');
         });
 
-        // Şube değişince bölümleri yükle
         document.getElementById('branchSelect').addEventListener('change', async function () {
             const id = this.value;
             const deptSel = document.getElementById('departmentSelect');
-            const docSel  = document.getElementById('doctorSelect');
-            const svcSel  = document.getElementById('serviceSelect');
-
             resetSelect(deptSel, '— Yükleniyor... —');
-            resetSelect(docSel,  '— Önce bölüm seçin —');
-            resetSelect(svcSel,  '— Önce bölüm seçin —');
-
-            if (!id) { resetSelect(deptSel, '— Önce şube seçin —'); checkSubmitReady(); return; }
-
+            resetSelect(document.getElementById('doctorSelect'), '— Önce bölüm seçin —');
+            resetSelect(document.getElementById('serviceSelect'), '— Önce bölüm seçin —');
+            document.getElementById('dateInput').disabled = true;
+            document.getElementById('slotsSection').style.display = 'none';
+            clearSlots();
+            if (!id) { resetSelect(deptSel, '— Önce şube seçin —'); return; }
             const data = await fetchJson(`${baseUrl}/GetDepartments?branchId=${id}`);
-            fillSelect(deptSel, data, '— Bölüm seçin —');
-            checkSubmitReady();
+            fillSelect(deptSel, data || [], '— Bölüm seçin —');
         });
 
-        // Bölüm değişince doktor ve hizmetleri yükle
         document.getElementById('departmentSelect').addEventListener('change', async function () {
             const id = this.value;
             const docSel = document.getElementById('doctorSelect');
             const svcSel = document.getElementById('serviceSelect');
-
             resetSelect(docSel, '— Yükleniyor... —');
             resetSelect(svcSel, '— Yükleniyor... —');
-
+            document.getElementById('dateInput').disabled = true;
+            document.getElementById('slotsSection').style.display = 'none';
+            clearSlots();
             if (!id) {
                 resetSelect(docSel, '— Önce bölüm seçin —');
                 resetSelect(svcSel, '— Önce bölüm seçin —');
-                checkSubmitReady(); return;
+                return;
             }
-
-            const [doctors, services] = await Promise.all([
+            const [docs, svcs] = await Promise.all([
                 fetchJson(`${baseUrl}/GetDoctors?departmentId=${id}`),
                 fetchJson(`${baseUrl}/GetServices?departmentId=${id}`)
             ]);
-            fillSelect(docSel, doctors, '— Doktor seçin —');
-            fillSelect(svcSel, services, '— Hizmet seçin —');
-            checkSubmitReady();
+            fillSelect(docSel, docs || [], '— Doktor seçin —');
+            fillSelect(svcSel, svcs || [], '— Hizmet seçin —');
         });
 
-        // Diğer değişiklikler
-        ['doctorSelect', 'serviceSelect', 'timeSelect', 'AppointmentDate'].forEach(id => {
-            document.getElementById(id)?.addEventListener('change', checkSubmitReady);
+        document.getElementById('doctorSelect').addEventListener('change', function () {
+            const opt = this.options[this.selectedIndex];
+            doctorName = opt ? opt.textContent.split(' — ')[0].replace('Dr. ', '') : '';
+            document.getElementById('doctorNameBadge').textContent = doctorName ? '— Dr. ' + doctorName : '';
+            checkEnableDate();
+            clearSlots();
+            loadSlots();
         });
 
-        // Sayfa ilk açıldığında submit disabled
-        checkSubmitReady();
+        document.getElementById('serviceSelect').addEventListener('change', function () {
+            const opt = this.options[this.selectedIndex];
+            serviceName = opt ? opt.textContent.split(' (')[0] : '';
+            checkEnableDate();
+            clearSlots();
+            loadSlots();
+        });
+
+        document.getElementById('dateInput').addEventListener('change', function () {
+            clearSlots();
+            loadSlots();
+        });
+
+        function checkEnableDate() {
+            const hasDoctor = !!document.getElementById('doctorSelect').value;
+            const hasService = !!document.getElementById('serviceSelect').value;
+            const dateInput = document.getElementById('dateInput');
+            dateInput.disabled = !(hasDoctor && hasService);
+            if (dateInput.disabled) {
+                document.getElementById('slotsSection').style.display = 'none';
+                clearSlots();
+            }
+        }
+
     })();
     </script>
 }

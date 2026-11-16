@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HospitalAppointment.Web.Models;
 
-// Randevu oluşturma formu view model'i — SelectList koleksiyonları ile zenginleştirilmiş
+// Randevu oluşturma formu view model'i
 public class AppointmentViewModel
 {
-    // ─── Form Alanları ────────────────────────────────────────────────────────
-
     [Required(ErrorMessage = "Hastane seçimi zorunludur.")]
     [Display(Name = "Hastane")]
     public Guid HospitalId { get; set; }
@@ -33,17 +31,16 @@ public class AppointmentViewModel
     [Display(Name = "Randevu Tarihi")]
     public DateOnly AppointmentDate { get; set; } = DateOnly.FromDateTime(DateTime.Today.AddDays(1));
 
+    // Saat — müsaitlik grid'inden seçilir, "HH:mm:ss" formatında gelir
     [Required(ErrorMessage = "Randevu saati zorunludur.")]
-    [DataType(DataType.Time)]
     [Display(Name = "Başlangıç Saati")]
-    public TimeOnly StartTime { get; set; } = new TimeOnly(9, 0);
+    public TimeOnly StartTime { get; set; }
 
     [Display(Name = "Notlar")]
     [StringLength(500)]
     public string? Notes { get; set; }
 
-    // ─── Dropdown Listeleri ───────────────────────────────────────────────────
-
+    // Dropdown listeler
     public SelectList? Hospitals { get; set; }
     public SelectList? Branches { get; set; }
     public SelectList? Departments { get; set; }
