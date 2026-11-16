@@ -81,7 +81,7 @@ public abstract class Person : BaseEntity
             throw new ArgumentException("Ad/soyad boş olamaz.", paramName);
         if (name.Trim().Length < 2)
             throw new ArgumentException("Ad/soyad en az 2 karakter olmalıdır.", paramName);
-        if (!Regex.IsMatch(name.Trim(), @"^[\p{L}\s\-']+$"))
+        if (!Regex.IsMatch(name.Trim(), @"^[a-zA-ZçÇğĞıİöÖşŞüÜ\s\-']+$"))
             throw new ArgumentException("Ad/soyad yalnızca harf, boşluk, tire veya kesme işareti içerebilir.", paramName);
     }
 

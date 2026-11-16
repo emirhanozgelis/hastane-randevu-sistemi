@@ -4,8 +4,9 @@ namespace HospitalAppointment.Web.Models;
 // Yeni kural eklemek veya değiştirmek için yalnızca bu dosyayı düzenlemek yeterlidir.
 public static class ValidationPatterns
 {
-    // Ad / Soyad — Türkçe dahil harfler, boşluk, tire, kesme işareti
-    public const string Name = @"^[\p{L}\s\-']+$";
+    // Ad / Soyad — Türkçe karakterler açıkça tanımlı (ç,ğ,ı,ö,ş,ü ve büyükleri)
+    // \p{L} yerine açık liste: JavaScript (jQuery Validate) \p{L} desteklemez
+    public const string Name = @"^[a-zA-ZçÇğĞıİöÖşŞüÜ\s\-']+$";
     public const string NameError = "Yalnızca harf, boşluk, tire veya kesme işareti içerebilir.";
     public const int NameMinLength = 2;
     public const int NameMaxLength = 50;
