@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using HospitalAppointment.Domain.Enums;
 using HospitalAppointment.Domain.ValueObjects;
 
@@ -38,11 +39,12 @@ public abstract class Person : BaseEntity
         ValidateName(firstName, nameof(firstName));
         ValidateName(lastName, nameof(lastName));
         ValidateEmail(email);
+        ValidatePhone(phoneNumber);
 
         FirstName = firstName.Trim();
         LastName = lastName.Trim();
         Email = email.Trim().ToLowerInvariant();
-        PhoneNumber = phoneNumber?.Trim() ?? string.Empty;
+        PhoneNumber = NormalizePhone(phoneNumber);
         DateOfBirth = dateOfBirth;
         Gender = gender;
     }
@@ -79,13 +81,30 @@ public abstract class Person : BaseEntity
             throw new ArgumentException("Ad/soyad boş olamaz.", paramName);
         if (name.Trim().Length < 2)
             throw new ArgumentException("Ad/soyad en az 2 karakter olmalıdır.", paramName);
+        if (!Regex.IsMatch(name.Trim(), @"^[\p{L}\s\-']+$"))
+            throw new ArgumentException("Ad/soyad yalnızca harf, boşluk, tire veya kesme işareti içerebilir.", paramName);
     }
 
     private static void ValidateEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
             throw new ArgumentException("E-posta boş olamaz.", nameof(email));
-        if (!email.Contains('@'))
-            throw new ArgumentException("Geçerli bir e-posta adresi giriniz.", nameof(email));
+        if (!Regex.IsMatch(email.Trim(), @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            throw new ArgumentException("Geçerli bir e-posta adresi giriniz. Örn: ornek@mail.com", nameof(email));
+    }
+
+    // Türkiye telefon formatı: 05xxxxxxxxx, +905xxxxxxxxx, 5xxxxxxxxx
+    private static void ValidatePhone(string? phone)
+    {
+        if (string.IsNullOrWhiteSpace(phone)) return; // telefon opsiyonel
+        var normalized = phone.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
+        if (!Regex.IsMatch(normalized, @"^(\+90|0)?5[0-9]{9}$"))
+            throw new ArgumentException("Geçerli bir Türk telefon numarası giriniz. Örn: 05321234567", nameof(phone));
+    }
+
+    private static string NormalizePhone(string? phone)
+    {
+        if (string.IsNullOrWhiteSpace(phone)) return string.Empty;
+        return phone.Trim().Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
     }
 }
