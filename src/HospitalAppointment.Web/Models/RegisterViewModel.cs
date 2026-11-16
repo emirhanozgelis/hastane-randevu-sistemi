@@ -3,28 +3,31 @@ using HospitalAppointment.Domain.Enums;
 
 namespace HospitalAppointment.Web.Models;
 
-// Hasta kayıt formu view model'i
+// Hasta kayıt formu view model'i — tüm regex kuralları ValidationPatterns'den gelir
 public class RegisterViewModel
 {
     [Required(ErrorMessage = "Ad zorunludur.")]
-    [StringLength(50, MinimumLength = 2, ErrorMessage = "Ad 2-50 karakter arasında olmalıdır.")]
-    [RegularExpression(@"^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]+$", ErrorMessage = "Ad yalnızca harf içerebilir.")]
+    [StringLength(ValidationPatterns.NameMaxLength, MinimumLength = ValidationPatterns.NameMinLength,
+        ErrorMessage = "Ad 2-50 karakter arasında olmalıdır.")]
+    [RegularExpression(ValidationPatterns.Name, ErrorMessage = "Ad " + ValidationPatterns.NameError)]
     [Display(Name = "Ad")]
     public string FirstName { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Soyad zorunludur.")]
-    [StringLength(50, MinimumLength = 2, ErrorMessage = "Soyad 2-50 karakter arasında olmalıdır.")]
-    [RegularExpression(@"^[a-zA-ZçÇğĞıİöÖşŞüÜ\s]+$", ErrorMessage = "Soyad yalnızca harf içerebilir.")]
+    [StringLength(ValidationPatterns.NameMaxLength, MinimumLength = ValidationPatterns.NameMinLength,
+        ErrorMessage = "Soyad 2-50 karakter arasında olmalıdır.")]
+    [RegularExpression(ValidationPatterns.Name, ErrorMessage = "Soyad " + ValidationPatterns.NameError)]
     [Display(Name = "Soyad")]
     public string LastName { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "E-posta zorunludur.")]
-    [EmailAddress(ErrorMessage = "Geçerli bir e-posta adresi girin. Örn: ornek@mail.com")]
+    [RegularExpression(ValidationPatterns.Email, ErrorMessage = ValidationPatterns.EmailError)]
     [Display(Name = "E-posta")]
     public string Email { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Şifre zorunludur.")]
-    [StringLength(100, MinimumLength = 6, ErrorMessage = "Şifre en az 6 karakter olmalıdır.")]
+    [StringLength(ValidationPatterns.PasswordMaxLength, MinimumLength = ValidationPatterns.PasswordMinLength,
+        ErrorMessage = "Şifre en az 6 karakter olmalıdır.")]
     [DataType(DataType.Password)]
     [Display(Name = "Şifre")]
     public string Password { get; set; } = string.Empty;
@@ -36,8 +39,7 @@ public class RegisterViewModel
     public string ConfirmPassword { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Telefon numarası zorunludur.")]
-    [RegularExpression(@"^(\+90|0)?[5][0-9]{9}$",
-        ErrorMessage = "Geçerli bir Türk cep numarası girin. Örn: 05321234567 veya +905321234567")]
+    [RegularExpression(ValidationPatterns.TurkishPhone, ErrorMessage = ValidationPatterns.TurkishPhoneError)]
     [Display(Name = "Telefon")]
     public string PhoneNumber { get; set; } = string.Empty;
 

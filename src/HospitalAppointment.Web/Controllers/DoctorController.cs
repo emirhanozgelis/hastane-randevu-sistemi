@@ -1,6 +1,6 @@
-using System.Security.Claims;
 using HospitalAppointment.Application.DTOs.Doctor;
 using HospitalAppointment.Application.Interfaces;
+using HospitalAppointment.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,17 +13,20 @@ public class DoctorController : Controller
     private readonly IDoctorService _doctorService;
     private readonly IBranchService _branchService;
     private readonly IDepartmentService _departmentService;
+    private readonly IHospitalService _hospitalService;
     private readonly ILogger<DoctorController> _logger;
 
     public DoctorController(
         IDoctorService doctorService,
         IBranchService branchService,
         IDepartmentService departmentService,
+        IHospitalService hospitalService,
         ILogger<DoctorController> logger)
     {
         _doctorService = doctorService;
         _branchService = branchService;
         _departmentService = departmentService;
+        _hospitalService = hospitalService;
         _logger = logger;
     }
 
@@ -49,7 +52,13 @@ public class DoctorController : Controller
         }
         else
         {
-            doctors = new List<DoctorDto>();
+            // Filtre yok — tüm şubelerdeki doktorları getir
+            var hospitals = await _hospitalService.GetAllHospitalsAsync(cancellationToken);
+            var allDoctors = new List<DoctorDto>();
+            foreach (var h in hospitals)
+                foreach (var b in h.Branches ?? [])
+                    allDoctors.AddRange(await _doctorService.GetDoctorsByBranchAsync(b.Id, cancellationToken));
+            doctors = allDoctors.DistinctBy(d => d.Id).ToList().AsReadOnly();
         }
 
         return View(doctors);
@@ -59,8 +68,7 @@ public class DoctorController : Controller
     public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
     {
         var doctor = await _doctorService.GetDoctorAsync(id, cancellationToken);
-        if (doctor is null)
-            return NotFound();
+        if (doctor is null) return NotFound();
 
         var availability = await _doctorService.GetDoctorAvailabilityAsync(id, cancellationToken);
         ViewBag.Availability = availability;
@@ -72,33 +80,37 @@ public class DoctorController : Controller
     [Authorize(Roles = "Admin,HospitalManager")]
     public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
-        await PopulateDropdowns(null, null, cancellationToken);
-        return View(new CreateDoctorDto(
-            string.Empty, string.Empty, string.Empty, string.Empty,
-            DateOnly.FromDateTime(DateTime.Today.AddYears(-30)),
-            HospitalAppointment.Domain.Enums.Gender.NotSpecified,
-            string.Empty, DateOnly.FromDateTime(DateTime.Today),
-            Guid.Empty, Guid.Empty,
-            string.Empty, string.Empty, string.Empty));
+        var vm = new CreateDoctorViewModel();
+        await PopulateDropdowns(vm, cancellationToken);
+        return View(vm);
     }
 
-    // Yeni doktor kaydetme — Admin veya HospitalManager
+    // Yeni doktor kaydetme — ViewModel üzerinden, DTO'ya dönüştürülür
     [HttpPost]
     [Authorize(Roles = "Admin,HospitalManager")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateDoctorDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(CreateDoctorViewModel vm, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
-            await PopulateDropdowns(dto.BranchId, dto.DepartmentId, cancellationToken);
-            return View(dto);
+            await PopulateDropdowns(vm, cancellationToken);
+            return View(vm);
         }
 
         try
         {
+            // ViewModel → DTO dönüşümü
+            var dto = new CreateDoctorDto(
+                vm.FirstName, vm.LastName, vm.Email, vm.PhoneNumber,
+                vm.DateOfBirth, vm.Gender,
+                vm.EmployeeNumber, vm.HireDate,
+                vm.BranchId, vm.DepartmentId,
+                vm.Specialization, vm.LicenseNumber,
+                vm.Password, vm.Biography);
+
             await _doctorService.CreateDoctorAsync(dto, cancellationToken);
-            TempData["Success"] = $"Dr. {dto.FirstName} {dto.LastName} başarıyla oluşturuldu.";
-            return RedirectToAction(nameof(Index), new { branchId = dto.BranchId });
+            TempData["Success"] = $"Dr. {vm.FirstName} {vm.LastName} başarıyla oluşturuldu.";
+            return RedirectToAction(nameof(Index), new { branchId = vm.BranchId });
         }
         catch (Exception ex)
         {
@@ -106,8 +118,8 @@ public class DoctorController : Controller
             TempData["Error"] = ex.Message;
         }
 
-        await PopulateDropdowns(dto.BranchId, dto.DepartmentId, cancellationToken);
-        return View(dto);
+        await PopulateDropdowns(vm, cancellationToken);
+        return View(vm);
     }
 
     // Doktor müsaitlik takvimi — herkese açık
@@ -115,8 +127,7 @@ public class DoctorController : Controller
     public async Task<IActionResult> Availability(Guid id, CancellationToken cancellationToken)
     {
         var doctor = await _doctorService.GetDoctorAsync(id, cancellationToken);
-        if (doctor is null)
-            return NotFound();
+        if (doctor is null) return NotFound();
 
         var availability = await _doctorService.GetDoctorAvailabilityAsync(id, cancellationToken);
         ViewBag.Doctor = doctor;
@@ -129,8 +140,7 @@ public class DoctorController : Controller
     public async Task<IActionResult> AddAvailability(Guid id, CancellationToken cancellationToken)
     {
         var doctor = await _doctorService.GetDoctorAsync(id, cancellationToken);
-        if (doctor is null)
-            return NotFound();
+        if (doctor is null) return NotFound();
 
         ViewBag.DoctorId = id;
         ViewBag.DoctorName = doctor.FullName;
@@ -138,7 +148,7 @@ public class DoctorController : Controller
             new TimeOnly(9, 0), new TimeOnly(17, 0)));
     }
 
-    // Müsaitlik kaydetme — Admin veya Doctor
+    // Müsaitlik kaydetme
     [HttpPost]
     [Authorize(Roles = "Admin,Doctor")]
     [ValidateAntiForgeryToken]
@@ -169,23 +179,22 @@ public class DoctorController : Controller
         return View(dto);
     }
 
-    private async Task PopulateDropdowns(
-        Guid? branchId,
-        Guid? departmentId,
-        CancellationToken cancellationToken)
+    // ViewModel'e şube ve bölüm dropdown'larını doldur
+    private async Task PopulateDropdowns(CreateDoctorViewModel vm, CancellationToken cancellationToken)
     {
-        // Şubeler — tüm hastanelerin şubelerini göstermek için kısaltılmış örnek
-        // Gerçek uygulamada IHospitalService.GetAllHospitalsAsync üzerinden tüm şubeler yüklenir
-        IReadOnlyList<HospitalAppointment.Application.DTOs.Branch.BranchDto> branches =
-            branchId.HasValue ? Array.Empty<HospitalAppointment.Application.DTOs.Branch.BranchDto>()
-                             : Array.Empty<HospitalAppointment.Application.DTOs.Branch.BranchDto>();
+        var hospitals = await _hospitalService.GetAllHospitalsAsync(cancellationToken);
+        var allBranches = hospitals.SelectMany(h => h.Branches ?? []).ToList();
 
-        IReadOnlyList<HospitalAppointment.Application.DTOs.Department.DepartmentDto> departments =
-            branchId.HasValue && branchId != Guid.Empty
-                ? await _departmentService.GetDepartmentsByBranchAsync(branchId.Value, cancellationToken)
-                : Array.Empty<HospitalAppointment.Application.DTOs.Department.DepartmentDto>();
+        vm.Branches = new SelectList(allBranches, "Id", "Name", vm.BranchId);
 
-        ViewBag.Branches = new SelectList(branches, "Id", "Name", branchId);
-        ViewBag.Departments = new SelectList(departments, "Id", "Name", departmentId);
+        if (vm.BranchId != Guid.Empty)
+        {
+            var departments = await _departmentService.GetDepartmentsByBranchAsync(vm.BranchId, cancellationToken);
+            vm.Departments = new SelectList(departments, "Id", "Name", vm.DepartmentId);
+        }
+        else
+        {
+            vm.Departments = new SelectList(Enumerable.Empty<object>(), "Id", "Name");
+        }
     }
 }
